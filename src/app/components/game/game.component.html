@@ -1,4 +1,14 @@
 <div class="game">
+    <div class="score">
+        {{ displayScore$ | async }}
+    </div>
     <canvas #canvas class="canvas"></canvas>
-    <button (click)="nextShape()">nextShape</button>
+    <button *ngIf="debugMode" (click)="nextShape()">nextShape</button>
+
+    <div class="game-end" *ngIf="gameEnded$ | async">
+        Game Over:<br>
+        Score: {{ displayScore$ | async }}<br>
+        <button (click)="newGame()">neues Spiel</button>
+        
+    </div>
 </div>
