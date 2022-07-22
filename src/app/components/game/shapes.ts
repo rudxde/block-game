@@ -27,8 +27,8 @@ function mirrorShape(shape: IShape, horizontal: boolean): IShape {
         height: shape.height,
         width: shape.width,
         fields: shape.fields.map(field => ({
-            x: !horizontal ? shape.width - field.x : field.x,
-            y: !horizontal ? field.y : shape.height - field.y,
+            x: !horizontal ? shape.width - field.x - 1 : field.x,
+            y: !horizontal ? field.y : shape.height - field.y - 1,
         })),
     };
 }
@@ -43,7 +43,7 @@ function transformShape(shape: IShape, rotations: number, mirror: 'no' | 'horizo
         mirrorResults.push(mirrorShape(shape, true));
         mirrorResults.push(mirrorShape(shape, false));
     }
-    let result: IShape[] = [];
+    let result: IShape[] = [...mirrorResults];
     for (let mirrorResult of mirrorResults) {
         for (let i = 0; i < rotations; i++) {
             result.push(rotateShape(mirrorResult, (90 * i)));
@@ -54,8 +54,28 @@ function transformShape(shape: IShape, rotations: number, mirror: 'no' | 'horizo
 
 export function getShapes(): IShape[] {
     return [
-        ...transformShape({ height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 1 }] }, 2, 'horizontal'),
-        ...transformShape({ height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }] }, 4, 'horizontal'),
-        ...transformShape({ height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 1 }, { x: 2, y: 1 }] }, 2, 'horizontal'),
+        // small T
+        ...transformShape({ height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 1 }] }, 1, 'vertical'),
+        // big T
+        ...transformShape({ height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 1 }, { x: 2, y: 1 }] }, 1, 'vertical'),
+        // small L
+        ...transformShape({ height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }] }, 3, 'horizontal'),
+        // S
+        ...transformShape({ height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 2 }] }, 3, 'horizontal'),
+        // quadrat
+        ...transformShape({ height: 2, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 0 }, { x: 1, y: 1 }] }, 0, 'no'),
+        // big L
+        ...transformShape({ height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 2 }, { x: 2, y: 2 }] }, 3, 'no'),
+        // C
+        ...transformShape({ height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }, { x: 1, y: 2 },] }, 3, 'horizontal'),
+        // sticks
+        ...transformShape({ height: 1, width: 1, fields: [{ x: 0, y: 0 }] }, 0, 'no'),
+        ...transformShape({ height: 2, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }] }, 1, 'no'),
+        ...transformShape({ height: 3, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }] }, 1, 'no'),
+        ...transformShape({ height: 4, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 }] }, 1, 'no'),
+        ...transformShape({ height: 5, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 }, { x: 0, y: 4 }] }, 1, 'no'),
+        // slash
+        ...transformShape({ height: 2, width: 2, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }] }, 1, 'no'),
+        ...transformShape({ height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 }] }, 1, 'no'),
     ];
 }

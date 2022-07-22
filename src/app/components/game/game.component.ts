@@ -24,9 +24,16 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   allShapes: IShape[] = getShapes();
 
-  showDebugLines = true;
+  debugMode = true;
+
+  readonly cellSizeOfWidth = 0.11111;
+  readonly draggingOffsetY = -32;
+
+  dragX = 0;
+  dragY = 0;
 
   @ViewChild('canvas', { read: ElementRef }) canvas?: ElementRef<HTMLCanvasElement>;
+
 
   constructor() {
     this.gameField = new Array(9).fill(undefined).map((_, x) => new Array(9).fill(undefined).map((_, y) => (<IField>{
@@ -39,12 +46,28 @@ export class GameComponent implements OnInit, AfterViewInit {
 
     this.gameField[2][3].placed = true;
     this.gameField[3][3].placed = true;
-    this.gameField[3][3].highlighted = true;
-    this.gameField[4][3].marked = true;
   }
 
   ngOnInit(): void {
     this.refillShapes();
+  }
+
+  debugShapeCount = 0;
+  nextShape() {
+    if (this.debugMode) {
+      this.nextShapes = [
+        { shape: this.allShapes[this.debugShapeCount], isDragging: false },
+        { shape: this.allShapes[this.debugShapeCount + 1], isDragging: false },
+        { shape: this.allShapes[this.debugShapeCount + 2], isDragging: false },
+      ];
+      this.debugShapeCount += 3;
+      if (this.debugShapeCount >= this.allShapes.length) {
+        this.debugShapeCount = 0;
+      }
+      return;
+    }
+    this.refillShapes();
+
   }
 
   ngAfterViewInit(): void {
@@ -62,9 +85,33 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   setupListeners(canvas: HTMLCanvasElement) {
     window.addEventListener('resize', () => this.setCanvasSize());
-    canvas.addEventListener('pointerdown', (e) => this.pointerDown(e.x, e.y));
-    canvas.addEventListener('pointerup', (e) => this.pointerDown(e.x, e.y));
-    canvas.addEventListener('pointermove', (e) => this.pointerDown(e.x, e.y));
+    window.addEventListener('pointermove', (e) => {
+      e.preventDefault();
+    });
+    canvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      this.pointerDown(e.offsetX, e.offsetY);
+    });
+    canvas.addEventListener('pointerup', (e) => {
+      e.preventDefault();
+      this.pointerUp(e.offsetX, e.offsetY);
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      e.preventDefault();
+      this.pointerMove(e.offsetX, e.offsetY);
+    });
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      // this.pointerDown(e.touches[0].clientX, e.touches[0].clientY + canvas.top);
+    });
+    canvas.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      // this.pointerUp(e.clientX, e.offsetY);
+    });
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      // this.pointerMove(e.clientX, e.offsetY);
+    });
   }
 
   refillShapes() {
@@ -74,13 +121,38 @@ export class GameComponent implements OnInit, AfterViewInit {
       { shape: this.getRandomShape(), isDragging: false },
     ];
   }
+
   getRandomShape(): IShape {
     return this.allShapes[Math.floor(Math.random() * this.allShapes.length)];
   }
 
-  pointerMove(x: number, y: number) { }
-  pointerDown(x: number, y: number) { }
-  pointerUp(x: number, y: number) { }
+  pointerMove(x: number, y: number) {
+    this.dragX = x;
+    this.dragY = y;
+    this.markDraggingShape();
+    this.checkEliminationMarking();
+    
+  }
+
+  pointerDown(x: number, y: number) {
+    this.dragX = x;
+    this.dragY = y;
+    if (y < this.width + 16) {
+      return;
+    }
+    this.pointerUp(x, y);
+    let selectedNextOne = Math.floor(3 * x / this.width);
+    this.nextShapes[selectedNextOne].isDragging = true;
+  }
+
+  pointerUp(x: number, y: number) {
+    this.resetMarkings();
+    this.placeDragging();
+    this.nextShapes.forEach(x => x.isDragging = false);
+    if (this.nextShapes.reduce((acc, val) => acc && !val.shape, true)) {
+      this.refillShapes();
+    }
+  }
 
   setCanvasSize() {
     let padding = 16;
@@ -118,7 +190,6 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   drawGameField(ctx: CanvasRenderingContext2D) {
     let w = this.width;
-    let cellSize = 0.11111;
 
     function line(horizontal: boolean, position: number): void {
       if (horizontal) {
@@ -133,7 +204,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     ctx.beginPath();
     ctx.strokeStyle = '#555';
     ctx.lineWidth = 0.5;
-    for (let i = 0; i <= 1; i += cellSize) {
+    for (let i = 0; i <= 1; i += this.cellSizeOfWidth) {
       let w = Math.round(i * 1000) / 1000;
       line(true, w);
       line(false, w);
@@ -159,14 +230,14 @@ export class GameComponent implements OnInit, AfterViewInit {
         }
         let x1 = (x / 9) * w;
         let y1 = (y / 9) * w;
-        ctx.fillRect(x1, y1, cellSize * w, cellSize * w);
+        ctx.fillRect(x1, y1, this.cellSizeOfWidth * w, this.cellSizeOfWidth * w);
       }
     }
 
     ctx.beginPath();
     ctx.strokeStyle = '#000';
     ctx.lineWidth = 2;
-    for (let i = 0; i <= 1; i += cellSize * 3) {
+    for (let i = 0; i <= 1; i += this.cellSizeOfWidth * 3) {
       let w = Math.round(i * 1000) / 1000;
       line(true, w);
       line(false, w);
@@ -183,7 +254,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     let previewSize = (w / 3) - 16;
     let offsetY = w + 16;
 
-    if (this.showDebugLines) {
+    if (this.debugMode) {
       ctx.beginPath();
       ctx.strokeStyle = '#555';
       ctx.lineWidth = 0.5;
@@ -203,29 +274,168 @@ export class GameComponent implements OnInit, AfterViewInit {
     // let offsetY = w;
     for (let i = 0; i < this.nextShapes.length; i++) {
       let shape = this.nextShapes[i];
-      if (!shape.shape) {
+      if (!shape.shape || shape.isDragging) {
         continue;
       }
+      const largestDimension = shape.shape.height > shape.shape.width ? shape.shape.height : shape.shape.width;
       // let offsetX = 0;
-      let shapeCellSize = (previewSize / (shape.shape.height > shape.shape.width ? shape.shape.height : shape.shape.width));
+      let shapeCellSize = (previewSize / largestDimension);
+      if (largestDimension === 2) {
+        shapeCellSize *= 0.66;
+      }
+      if (largestDimension === 1) {
+        shapeCellSize *= 0.33;
+      }
       let offsetX = i * (previewSize + 16) + ((previewSize - (shapeCellSize * shape.shape.width)) / 2) + 16;
-      for (let field of shape.shape.fields) {
-        console.log({ x: field.x, y: field.y, shapeCellSize });
-        let x = (field.x * shapeCellSize) + offsetX;
-        let y = (field.y * shapeCellSize) + offsetY;
-        ctx.fillStyle = '#00F';
-        ctx.fillRect(x, y, shapeCellSize, shapeCellSize);
-        if (this.showDebugLines) {
-          ctx.fillStyle = '#FFF';
-          ctx.fillText(`${field.x}|${field.y} (${shape.shape.width}|${shape.shape.height})`, x, y + 10);
-        }
+      this.drawShape(shape.shape, shapeCellSize, offsetX, offsetY, ctx);
+    }
+  }
+
+  private drawShape(shape: IShape, shapeCellSize: number, offsetX: number, offsetY: number, ctx: CanvasRenderingContext2D) {
+    for (let field of shape.fields) {
+      let x = (field.x * shapeCellSize) + offsetX;
+      let y = (field.y * shapeCellSize) + offsetY;
+      ctx.fillStyle = '#00F';
+      ctx.fillRect(x, y, shapeCellSize - 1, shapeCellSize - 1);
+      if (this.debugMode) {
+        ctx.fillStyle = '#FFF';
+        ctx.fillText(`${field.x}|${field.y} (${shape.width}|${shape.height})`, x, y + 10);
       }
     }
   }
 
   drawDraggingShape(ctx: CanvasRenderingContext2D) {
-
+    for (let shape of this.nextShapes) {
+      if (!shape.shape || !shape.isDragging) {
+        continue;
+      }
+      let offsetX = this.dragX - (shape.shape.width * this.cellSizeOfWidth * this.width / 2);
+      let offsetY = this.dragY - (shape.shape.height * this.cellSizeOfWidth * this.width) + this.draggingOffsetY;
+      this.drawShape(shape.shape, this.width * this.cellSizeOfWidth, offsetX, offsetY, ctx);
+    }
   }
 
+  resetMarkings() {
+    this.gameField.forEach(line => line.forEach(field => {
+      field.highlighted = false;
+      field.marked = false;
+    }));
+  }
 
+  placeDragging() {
+    if (this.dragY > this.width - this.draggingOffsetY) {
+      return;
+    }
+    this.resetMarkings();
+    let dragging = this.nextShapes.find(x => x.isDragging);
+    if (!dragging) {
+      return;
+    }
+    if (!dragging.shape) {
+      throw new Error('dragging shape has no shape');
+    }
+    const position = this.getDraggingCellPosition(dragging.shape);
+    if (!this.positionIsOnBoard(position)) {
+      return;
+    }
+    if (!this.canDropShape(dragging.shape, position)) {
+      return;
+    }
+    this.placeShape(dragging.shape, position);
+    dragging.shape = undefined;
+    dragging.isDragging = false;
+  }
+
+  markDraggingShape() {
+    if (this.dragY > this.width - this.draggingOffsetY) {
+      return;
+    }
+    this.resetMarkings();
+    let dragging = this.nextShapes.find(x => x.isDragging);
+    if (!dragging) {
+      return;
+    }
+    if (!dragging.shape) {
+      throw new Error('dragging shape has no shape');
+    }
+    const position = this.getDraggingCellPosition(dragging.shape);
+    if (!this.positionIsOnBoard(position)) {
+      return;
+    }
+    if (!this.canDropShape(dragging.shape, position)) {
+      return;
+    }
+
+    this.markShape(dragging.shape, position);
+  }
+
+  private canDropShape(shape: IShape, position: { x: number; y: number; }): boolean {
+    for (let field of shape.fields) {
+      if (this.gameField[field.x + position.x][field.y + position.y].placed) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private positionIsOnBoard(p: { x: number, y: number }): boolean {
+    if (
+      p.x < 0
+      || p.x >= 9
+      || p.y < 0
+      || p.y >= 9
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  private markShape(shape: IShape, position: { x: number; y: number; }) {
+    for (let field of shape.fields) {
+      this.gameField[field.x + position.x][field.y + position.y].marked = true;
+    }
+  }
+
+  private placeShape(shape: IShape, position: { x: number; y: number; }) {
+    for (let field of shape.fields) {
+      this.gameField[field.x + position.x][field.y + position.y].placed = true;
+    }
+  }
+
+  getDraggingCellPosition(dragging: IShape): { x: number, y: number } {
+
+    let basePositionX = this.dragX - (dragging.width * this.cellSizeOfWidth * this.width / 2);
+    let basePositionY = this.dragY - (dragging.height * this.cellSizeOfWidth * this.width) + this.draggingOffsetY;
+    return {
+      x: Math.round(basePositionX / (this.width * this.cellSizeOfWidth)),
+      y: Math.round(basePositionY / (this.width * this.cellSizeOfWidth))
+    }
+  }
+
+  private checkEliminationMarking() {
+    for (let i = 0; i < 9; i++) {
+      let allMarkedX = true;
+      let allMarkedY = true;
+      for (let j = 0; j < 9; j++) {
+        if (!this.gameField[i][j].placed && !this.gameField[i][j].marked) {
+          allMarkedX = false;
+        }
+        if (!this.gameField[j][i].placed && !this.gameField[j][i].marked) {
+          allMarkedY = false;
+        }
+      }
+      if (allMarkedX) {
+        for (let j = 0; j < 9; j++) {
+          this.gameField[i][j].highlighted = true;
+        }
+      }
+      if (allMarkedY) {
+        for (let j = 0; j < 9; j++) {
+          this.gameField[j][i].highlighted = true;
+        }
+      }
+    }
+    
+    
+  }
 }
