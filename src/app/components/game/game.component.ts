@@ -15,6 +15,7 @@ interface IStoredGame {
   gameField: IField[][];
   nextShapes: { shape?: IShape, isDragging: boolean }[];
   gameEnded: boolean;
+  streakMultiplier: number;
 }
 
 @Component({
@@ -54,6 +55,8 @@ export class GameComponent implements OnInit, AfterViewInit {
   displayScore$ = new BehaviorSubject<number>(0);
   displayHighScore$ = new BehaviorSubject<number>(0);
 
+  streakMultiplier = 1;
+
   isHighScore = false;
   gameEnded$ = new BehaviorSubject<boolean>(false);
 
@@ -84,6 +87,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       nextShapes: this.nextShapes,
       score: this.score,
       gameEnded: this.gameEnded$.value,
+      streakMultiplier: this.streakMultiplier,
     };
     localStorage.setItem('store', JSON.stringify(game));
   }
@@ -100,6 +104,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.nextShapes = storedGame.nextShapes;
     this.score = storedGame.score;
     this.gameEnded$.next(storedGame.gameEnded);
+    this.streakMultiplier = this.streakMultiplier;
   }
 
   tick() {
@@ -234,21 +239,24 @@ export class GameComponent implements OnInit, AfterViewInit {
   pointerUp(x: number, y: number) {
     this.resetMarkings();
 
-
-
     let placed = this.placeDragging();
 
     let eliminations = this.checkEliminationMarking();
 
     let eliminated = this.eliminateHighlighted();
 
-
-    let scoreIncrease = placed + eliminated;
+    let scoreIncrease = placed + eliminated + (eliminations * 9);
     if (eliminations > 1) {
-      scoreIncrease *= eliminations;
+      scoreIncrease *= (this.streakMultiplier + eliminations);
     }
 
     this.addToScore(scoreIncrease);
+
+    if (eliminations === 0) {
+      this.streakMultiplier = 0;
+    } else {
+      this.streakMultiplier += 1;
+    }
 
     this.nextShapes.forEach(x => x.isDragging = false);
     if (this.nextShapes.reduce((acc, val) => acc && !val.shape, true)) {
@@ -426,9 +434,9 @@ export class GameComponent implements OnInit, AfterViewInit {
         shapeCellSize *= 0.33;
       }
       let offsetX = i * (previewSize + 16) + ((previewSize - (shapeCellSize * shape.shape.width)) / 2) + 16;
-      
+
       let shapeIsDisabled = (!this.shapeCanBePlaced(shape.shape)) || this.gameEnded$.value;
-      
+
       this.drawShape(shape.shape, shapeCellSize, offsetX, offsetY, ctx, shapeIsDisabled);
     }
   }
@@ -645,7 +653,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       if (!shape.shape) {
         continue;
       }
-      if(this.shapeCanBePlaced(shape.shape)) {
+      if (this.shapeCanBePlaced(shape.shape)) {
         return true;
       }
     }
