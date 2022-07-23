@@ -10,6 +10,13 @@ interface IField {
   marked: boolean;
 }
 
+interface IStoredGame {
+  score: number;
+  gameField: IField[][];
+  nextShapes: { shape?: IShape, isDragging: boolean }[];
+  gameEnded: boolean;
+}
+
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -64,11 +71,35 @@ export class GameComponent implements OnInit, AfterViewInit {
       highlighted: false,
       marked: false,
     })));
-    this.newGame();
+    this.loadStoredGame();
   }
 
   ngOnInit(): void {
     this.refillShapes();
+  }
+
+  storeGame() {
+    let game : IStoredGame = {
+      gameField: this.gameField,
+      nextShapes: this.nextShapes,
+      score: this.score,
+      gameEnded: this.gameEnded$.value,
+    };
+    localStorage.setItem('store', JSON.stringify(game));
+  }
+
+  loadStoredGame() { 
+    this.highScore = parseInt(localStorage.getItem('highScore') ?? '0');
+    const storedGameJson = localStorage.getItem('store');
+    if(!storedGameJson) {
+      this.newGame();
+      return;
+    }
+    let storedGame: IStoredGame = JSON.parse(storedGameJson);
+    this.gameField = storedGame.gameField;
+    this.nextShapes = storedGame.nextShapes;
+    this.score = storedGame.score;
+    this.gameEnded$.next(storedGame.gameEnded);
   }
 
   tick() {
@@ -101,6 +132,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.gameEnded$.next(false);
     this.highScore = parseInt(localStorage.getItem('highScore') ?? '0');
     this.lastHighScore = this.highScore;
+    this.storeGame();
   }
 
   debugShapeCount = 0;
@@ -226,7 +258,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     if (!this.canDropAnyOfNextShapes()) {
       this.endGame();
     }
-
+    this.storeGame();
   }
 
   endGame() {

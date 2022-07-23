@@ -1,10 +1,13 @@
 <div class="game">
     <div class="score">
-        <span class="score">
+        <span class="start-new">
+            <button (click)="newGame()">Neues Spiel</button>
+        </span>
+        <span class="score-num">
             {{ displayScore$ | async }}
         </span>
         <span class="high-score">
-            HighScore: {{displayHighScore$ | async}}
+            High-Score: {{displayHighScore$ | async}}
         </span>
     </div>
     <canvas #canvas class="canvas"></canvas>

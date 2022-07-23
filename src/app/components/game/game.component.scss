@@ -16,7 +16,17 @@
         grid-row: 1;
         grid-column: 1;
         display: grid;
-        .score {
+        
+        .start-new {
+            justify-self: start;
+            button {
+                border: 0;
+                background: 0;
+                padding: 8px;
+            }
+        }
+        
+        .score-num {
             margin: 32px;
             font-size: 32px;
             justify-self: center;
