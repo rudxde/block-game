@@ -340,10 +340,14 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   private drawShape(shape: IShape, shapeCellSize: number, offsetX: number, offsetY: number, ctx: CanvasRenderingContext2D) {
+    if (this.debugMode) {
+      ctx.fillStyle = '#000';
+      ctx.fillText(`id: ${shape.id}`, offsetX, offsetY);
+    }
     for (let field of shape.fields) {
       let x = (field.x * shapeCellSize) + offsetX;
       let y = (field.y * shapeCellSize) + offsetY;
-      if(this.gameEnded$.value) {
+      if (this.gameEnded$.value) {
         ctx.fillStyle = '#555';
       } else {
         ctx.fillStyle = '#00F';
