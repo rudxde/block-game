@@ -38,18 +38,23 @@ export class GameComponent implements OnInit, AfterViewInit {
   private readonly fieldDisabledColor = '#555';
   private readonly sectorLineColor = '#000';
   private readonly fieldLineColor = '#555';
-  
-  
+
+
   dragX = 0;
   dragY = 0;
 
   score = 0;
   displayScore$ = new BehaviorSubject<number>(0);
+  displayHighScore$ = new BehaviorSubject<number>(0);
 
+  isHighScore = false;
   gameEnded$ = new BehaviorSubject<boolean>(false);
 
   @ViewChild('canvas', { read: ElementRef }) canvas?: ElementRef<HTMLCanvasElement>;
 
+
+  highScore = 0;
+  lastHighScore = 0;
 
   constructor() {
     this.gameField = new Array(9).fill(undefined).map((_, x) => new Array(9).fill(undefined).map((_, y) => (<IField>{
@@ -67,8 +72,18 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   tick() {
-    if (this.score !== this.displayScore$.value) {
-      this.displayScore$.next(this.displayScore$.value + 1);
+    this.updateDisplayCounter(this.score, this.displayScore$);
+    this.updateDisplayCounter(this.highScore, this.displayHighScore$);
+  }
+
+  updateDisplayCounter(goal: number, display$: BehaviorSubject<number>): void {
+    if (goal > display$.value) {
+      let inc = (goal - display$.value) / 5;
+      if (inc < 1) {
+        inc = 1;
+      }
+      inc = Math.floor(inc);
+      display$.next(display$.value + inc);
     }
   }
 
@@ -84,6 +99,8 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.score = 0;
     this.displayScore$.next(0);
     this.gameEnded$.next(false);
+    this.highScore = parseInt(localStorage.getItem('highScore') ?? '0');
+    this.lastHighScore = this.highScore;
   }
 
   debugShapeCount = 0;
@@ -199,7 +216,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       scoreIncrease *= eliminations;
     }
 
-    this.score += scoreIncrease;
+    this.addToScore(scoreIncrease);
 
     this.nextShapes.forEach(x => x.isDragging = false);
     if (this.nextShapes.reduce((acc, val) => acc && !val.shape, true)) {
@@ -207,9 +224,27 @@ export class GameComponent implements OnInit, AfterViewInit {
     }
 
     if (!this.canDropAnyOfNextShapes()) {
-      this.gameEnded$.next(true);
+      this.endGame();
     }
 
+  }
+
+  endGame() {
+    const lastHighScore = this.highScore;
+    this.isHighScore = this.score > lastHighScore;
+    if (this.isHighScore) {
+      localStorage.setItem('highScore', this.score.toString(10));
+    }
+    this.displayScore$.next(0);
+    this.gameEnded$.next(true);
+  }
+
+  addToScore(n: number) {
+    this.score += n;
+    if (this.score > this.highScore) {
+      this.highScore = this.score;
+      localStorage.setItem('highScore', this.highScore.toString(10));
+    }
   }
 
   setCanvasSize() {
@@ -302,7 +337,7 @@ export class GameComponent implements OnInit, AfterViewInit {
         let x1 = (x / 9) * w;
         let y1 = (y / 9) * w;
         ctx.fillRect(x1, y1, this.cellSizeOfWidth * w, this.cellSizeOfWidth * w);
-        
+
         ctx.lineWidth = 1;
         ctx.strokeStyle = this.fieldOuterBorderColor;
         if (field.marked) {
