@@ -209,6 +209,17 @@ export class GameComponent implements OnInit, AfterViewInit {
       { shape: this.getRandomShape(), isDragging: false },
       { shape: this.getRandomShape(), isDragging: false },
     ];
+
+    for (let shape of this.nextShapes) {
+      if (
+        shape.shape!.height + shape.shape!.width < 6
+        && shape.shape!.height < 4
+        && shape.shape!.width < 4
+      ) {
+        return;
+      }
+    }
+    this.refillShapes();
   }
 
   getRandomShape(): IShape {
