@@ -27,9 +27,19 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   debugMode = false;
 
-  readonly cellSizeOfWidth = 0.11111;
-  readonly draggingOffsetY = -32;
-
+  private readonly cellSizeOfWidth = 0.11111;
+  private readonly draggingOffsetY = -32;
+  private readonly fieldHighlightColor = '#4094eb';
+  private readonly fieldMarkedColor = '#AAA';
+  private readonly fieldBaseColor = '#4270d8';
+  private readonly fieldInnerBorderColor = '#5AF';
+  private readonly fieldOuterBorderColor = '#000';
+  private readonly markedFieldOuterBorderColor = '#555';
+  private readonly fieldDisabledColor = '#555';
+  private readonly sectorLineColor = '#000';
+  private readonly fieldLineColor = '#555';
+  
+  
   dragX = 0;
   dragY = 0;
 
@@ -250,7 +260,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     }
 
     ctx.beginPath();
-    ctx.strokeStyle = '#555';
+    ctx.strokeStyle = this.fieldLineColor;
     ctx.lineWidth = 0.5;
     for (let i = 0; i <= 1; i += this.cellSizeOfWidth) {
       let w = Math.round(i * 1000) / 1000;
@@ -263,27 +273,9 @@ export class GameComponent implements OnInit, AfterViewInit {
     ctx.lineWidth = 1;
 
 
-    for (let x = 0; x < this.gameField.length; x++) {
-      for (let y = 0; y < this.gameField[x].length; y++) {
-        let field = this.gameField[x][y];
-        if (!field.placed && !field.marked) {
-          continue;
-        }
-        ctx.fillStyle = '#00F';
-        if (field.marked) {
-          ctx.fillStyle = '#DDD';
-        }
-        if (field.highlighted) {
-          ctx.fillStyle = '#59F';
-        }
-        let x1 = (x / 9) * w;
-        let y1 = (y / 9) * w;
-        ctx.fillRect(x1, y1, this.cellSizeOfWidth * w, this.cellSizeOfWidth * w);
-      }
-    }
 
     ctx.beginPath();
-    ctx.strokeStyle = '#000';
+    ctx.strokeStyle = this.sectorLineColor;
     ctx.lineWidth = 2;
     for (let i = 0; i <= 1; i += this.cellSizeOfWidth * 3) {
       let w = Math.round(i * 1000) / 1000;
@@ -293,6 +285,38 @@ export class GameComponent implements OnInit, AfterViewInit {
     ctx.stroke();
     ctx.closePath();
 
+
+    for (let x = 0; x < this.gameField.length; x++) {
+      for (let y = 0; y < this.gameField[x].length; y++) {
+        let field = this.gameField[x][y];
+        if (!field.placed && !field.marked) {
+          continue;
+        }
+        ctx.fillStyle = this.fieldBaseColor;
+        if (field.marked) {
+          ctx.fillStyle = this.fieldMarkedColor;
+        }
+        if (field.highlighted) {
+          ctx.fillStyle = this.fieldHighlightColor;
+        }
+        let x1 = (x / 9) * w;
+        let y1 = (y / 9) * w;
+        ctx.fillRect(x1, y1, this.cellSizeOfWidth * w, this.cellSizeOfWidth * w);
+        
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = this.fieldOuterBorderColor;
+        if (field.marked) {
+          ctx.strokeStyle = this.markedFieldOuterBorderColor;
+        }
+        ctx.strokeRect(x1, y1, this.cellSizeOfWidth * w, this.cellSizeOfWidth * w);
+        if (field.marked) {
+          // don't draw border for marked fields
+          continue;
+        }
+        ctx.strokeStyle = this.fieldInnerBorderColor;
+        ctx.strokeRect(x1 + 1, y1 + 1, this.cellSizeOfWidth * w - 2, this.cellSizeOfWidth * w - 2);
+      }
+    }
 
 
   }
@@ -348,11 +372,18 @@ export class GameComponent implements OnInit, AfterViewInit {
       let x = (field.x * shapeCellSize) + offsetX;
       let y = (field.y * shapeCellSize) + offsetY;
       if (this.gameEnded$.value) {
-        ctx.fillStyle = '#555';
+        ctx.fillStyle = this.fieldDisabledColor;
       } else {
-        ctx.fillStyle = '#00F';
+        ctx.fillStyle = this.fieldBaseColor;
       }
-      ctx.fillRect(x, y, shapeCellSize - 1, shapeCellSize - 1);
+      ctx.fillRect(x, y, shapeCellSize, shapeCellSize);
+
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = this.fieldOuterBorderColor;
+      ctx.strokeRect(x, y, shapeCellSize, shapeCellSize);
+      ctx.strokeStyle = this.fieldInnerBorderColor;
+      ctx.strokeRect(x + 1, y + 1, shapeCellSize - 2, shapeCellSize - 2);
+
       if (this.debugMode) {
         ctx.fillStyle = '#FFF';
         ctx.fillText(`${field.x}|${field.y} (${shape.width}|${shape.height})`, x, y + 10);
@@ -380,9 +411,6 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   placeDragging(): number {
     let placed = 0;
-    if (this.dragY > this.width - this.draggingOffsetY) {
-      return 0;
-    }
     this.resetMarkings();
     let dragging = this.nextShapes.find(x => x.isDragging);
     if (!dragging) {
@@ -405,9 +433,6 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   markDraggingShape() {
-    if (this.dragY > this.width - this.draggingOffsetY) {
-      return;
-    }
     this.resetMarkings();
     let dragging = this.nextShapes.find(x => x.isDragging);
     if (!dragging) {
