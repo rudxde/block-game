@@ -8,6 +8,8 @@ interface IField {
   placed: boolean;
   highlighted: boolean;
   marked: boolean;
+  animationProgress?: number;
+  removed: boolean;
 }
 
 interface IStoredGame {
@@ -73,12 +75,13 @@ export class GameComponent implements OnInit, AfterViewInit {
       placed: false,
       highlighted: false,
       marked: false,
+      removed: false,
     })));
-    this.loadStoredGame();
   }
 
   ngOnInit(): void {
     this.refillShapes();
+    this.loadStoredGame();
   }
 
   storeGame() {
@@ -110,6 +113,24 @@ export class GameComponent implements OnInit, AfterViewInit {
   tick() {
     this.updateDisplayCounter(this.score, this.displayScore$);
     this.updateDisplayCounter(this.highScore, this.displayHighScore$);
+    let shouldStore = false;
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        if (!this.gameField[i][j].removed) {
+          continue;
+        }
+        if ((this.gameField[i][j].animationProgress ?? 0) >= 100) {
+          this.gameField[i][j].removed = false;
+          this.gameField[i][j].animationProgress = undefined;
+          shouldStore = true;
+          continue;
+        }
+        this.gameField[i][j].animationProgress = (this.gameField[i][j].animationProgress ?? 0) + 20;
+      }
+    }
+    if(shouldStore) {
+      this.storeGame();
+    }
   }
 
   updateDisplayCounter(goal: number, display$: BehaviorSubject<number>): void {
@@ -129,6 +150,10 @@ export class GameComponent implements OnInit, AfterViewInit {
         this.gameField[i][j].highlighted = false;
         this.gameField[i][j].marked = false;
         this.gameField[i][j].placed = false;
+        this.gameField[i][j].animationProgress = undefined;
+        // this.gameField[i][j].animationProgress = Math.floor(Math.random() * 100);
+        this.gameField[i][j].removed = false;
+        // this.gameField[i][j].removed = true;
       }
     }
     this.refillShapes();
@@ -374,37 +399,55 @@ export class GameComponent implements OnInit, AfterViewInit {
 
     for (let x = 0; x < this.gameField.length; x++) {
       for (let y = 0; y < this.gameField[x].length; y++) {
-        let field = this.gameField[x][y];
-        if (!field.placed && !field.marked) {
-          continue;
-        }
-        ctx.fillStyle = this.fieldBaseColor;
-        if (field.marked) {
-          ctx.fillStyle = this.fieldMarkedColor;
-        }
-        if (field.highlighted) {
-          ctx.fillStyle = this.fieldHighlightColor;
-        }
-        let x1 = (x / 9) * w;
-        let y1 = (y / 9) * w;
-        ctx.fillRect(x1, y1, this.cellSizeOfWidth * w, this.cellSizeOfWidth * w);
-
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = this.fieldOuterBorderColor;
-        if (field.marked) {
-          ctx.strokeStyle = this.markedFieldOuterBorderColor;
-        }
-        ctx.strokeRect(x1, y1, this.cellSizeOfWidth * w, this.cellSizeOfWidth * w);
-        if (field.marked) {
-          // don't draw border for marked fields
-          continue;
-        }
-        ctx.strokeStyle = this.fieldInnerBorderColor;
-        ctx.strokeRect(x1 + 1, y1 + 1, this.cellSizeOfWidth * w - 2, this.cellSizeOfWidth * w - 2);
+        this.drawField(ctx, x, y);
       }
     }
 
 
+  }
+
+  drawField(ctx: CanvasRenderingContext2D, x: number, y: number) {
+    let w = this.width;
+
+    let field = this.gameField[x][y];
+    if (!field.placed && !field.marked && (!field.removed && field.animationProgress !== 100)) {
+      return;
+    }
+    ctx.fillStyle = this.fieldBaseColor;
+    if (field.marked) {
+      ctx.fillStyle = this.fieldMarkedColor;
+    }
+    if (field.highlighted) {
+      ctx.fillStyle = this.fieldHighlightColor;
+    }
+
+    let size = 1;
+    if (field.removed && field.animationProgress) {
+      size -= field.animationProgress / 100;
+    }
+
+
+    let x1 = (x / 9) * w + (this.cellSizeOfWidth * w * (1 - size) / 2);
+    let y1 = (y / 9) * w + (this.cellSizeOfWidth * w * (1 - size) / 2);
+    ctx.fillRect(x1, y1, this.cellSizeOfWidth * w * size, this.cellSizeOfWidth * w * size);
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = this.fieldOuterBorderColor;
+    if (field.marked) {
+      ctx.strokeStyle = this.markedFieldOuterBorderColor;
+    }
+    ctx.strokeRect(x1, y1, this.cellSizeOfWidth * w * size, this.cellSizeOfWidth * w * size);
+    if (field.marked) {
+      // don't draw border for marked fields
+      return;
+    }
+    ctx.strokeStyle = this.fieldInnerBorderColor;
+    ctx.strokeRect(x1 + 1, y1 + 1, this.cellSizeOfWidth * w * size - 2, this.cellSizeOfWidth * w * size - 2);
+    if (this.debugMode) {
+      ctx.strokeStyle = '#FFF';
+      ctx.lineWidth = 0.5;
+      ctx.strokeText(size.toString(10), x1, y1 + 10);
+    }
   }
 
   drawNextShapes(ctx: CanvasRenderingContext2D) {
@@ -652,6 +695,8 @@ export class GameComponent implements OnInit, AfterViewInit {
           this.gameField[i][j].highlighted = false;
           this.gameField[i][j].placed = false;
           this.gameField[i][j].marked = false;
+          this.gameField[i][j].removed = true;
+          this.gameField[i][j].animationProgress = 0;
           eliminated++;
         }
       }
