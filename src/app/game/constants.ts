@@ -1,0 +1,11 @@
+export const cellSizeOfWidth = 0.11111;
+export const draggingOffsetY = -32;
+export const fieldHighlightColor = '#4094eb';
+export const fieldMarkedColor = '#AAA';
+export const fieldBaseColor = '#4270d8';
+export const fieldInnerBorderColor = '#5AF';
+export const fieldOuterBorderColor = '#000';
+export const markedFieldOuterBorderColor = '#555';
+export const fieldDisabledColor = '#555';
+export const sectorLineColor = '#000';
+export const fieldLineColor = '#555';

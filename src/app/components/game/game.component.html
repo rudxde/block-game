@@ -1,7 +1,7 @@
 <div class="game">
     <div class="score">
         <span class="start-new">
-            <button (click)="newGame()">Neues Spiel</button>
+            <button (click)="game?.newGame()">Neues Spiel</button>
         </span>
         <span class="score-num">
             {{ displayScore$ | async }}
@@ -11,18 +11,18 @@
         </span>
     </div>
     <canvas #canvas class="canvas"></canvas>
-    <button *ngIf="debugMode" (click)="nextShape()">nextShape</button>
+    <button *ngIf="debugMode" (click)="game?.nextShape()">nextShape</button>
 
     <div class="game-end" *ngIf="gameEnded$ | async">
         <div class="game-end-cnt">
             Game Over:<br>
-            <span *ngIf="isHighScore">
+            <span *ngIf="game?.isHighScore">
                 Neuer High-Score: {{ displayScore$ | async }}
             </span>
-            <span *ngIf="!isHighScore">
+            <span *ngIf="!game?.isHighScore">
                 Score: {{ displayScore$ | async }}<br>
             </span>
-            <button (click)="newGame()">neues Spiel</button>
+            <button (click)="game?.newGame()">neues Spiel</button>
         </div>
     </div>
 </div>
