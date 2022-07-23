@@ -14,14 +14,15 @@
     <button *ngIf="debugMode" (click)="nextShape()">nextShape</button>
 
     <div class="game-end" *ngIf="gameEnded$ | async">
-        Game Over:<br>
-        <span *ngIf="isHighScore">
-            Neuer High-Score: {{ displayScore$ | async }}
-        </span>
-        <span *ngIf="!isHighScore">
-            Score: {{ displayScore$ | async }}<br>
-        </span>
-        <button (click)="newGame()">neues Spiel</button>
-        
+        <div class="game-end-cnt">
+            Game Over:<br>
+            <span *ngIf="isHighScore">
+                Neuer High-Score: {{ displayScore$ | async }}
+            </span>
+            <span *ngIf="!isHighScore">
+                Score: {{ displayScore$ | async }}<br>
+            </span>
+            <button (click)="newGame()">neues Spiel</button>
+        </div>
     </div>
 </div>
