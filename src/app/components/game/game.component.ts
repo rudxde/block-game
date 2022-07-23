@@ -79,7 +79,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   storeGame() {
-    let game : IStoredGame = {
+    let game: IStoredGame = {
       gameField: this.gameField,
       nextShapes: this.nextShapes,
       score: this.score,
@@ -88,10 +88,10 @@ export class GameComponent implements OnInit, AfterViewInit {
     localStorage.setItem('store', JSON.stringify(game));
   }
 
-  loadStoredGame() { 
+  loadStoredGame() {
     this.highScore = parseInt(localStorage.getItem('highScore') ?? '0');
     const storedGameJson = localStorage.getItem('store');
-    if(!storedGameJson) {
+    if (!storedGameJson) {
       this.newGame();
       return;
     }
@@ -426,11 +426,14 @@ export class GameComponent implements OnInit, AfterViewInit {
         shapeCellSize *= 0.33;
       }
       let offsetX = i * (previewSize + 16) + ((previewSize - (shapeCellSize * shape.shape.width)) / 2) + 16;
-      this.drawShape(shape.shape, shapeCellSize, offsetX, offsetY, ctx);
+      
+      let shapeIsDisabled = (!this.shapeCanBePlaced(shape.shape)) || this.gameEnded$.value;
+      
+      this.drawShape(shape.shape, shapeCellSize, offsetX, offsetY, ctx, shapeIsDisabled);
     }
   }
 
-  private drawShape(shape: IShape, shapeCellSize: number, offsetX: number, offsetY: number, ctx: CanvasRenderingContext2D) {
+  private drawShape(shape: IShape, shapeCellSize: number, offsetX: number, offsetY: number, ctx: CanvasRenderingContext2D, disabled: boolean = false) {
     if (this.debugMode) {
       ctx.fillStyle = '#000';
       ctx.fillText(`id: ${shape.id}`, offsetX, offsetY);
@@ -438,7 +441,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     for (let field of shape.fields) {
       let x = (field.x * shapeCellSize) + offsetX;
       let y = (field.y * shapeCellSize) + offsetY;
-      if (this.gameEnded$.value) {
+      if (disabled) {
         ctx.fillStyle = this.fieldDisabledColor;
       } else {
         ctx.fillStyle = this.fieldBaseColor;
@@ -642,17 +645,24 @@ export class GameComponent implements OnInit, AfterViewInit {
       if (!shape.shape) {
         continue;
       }
-      for (let i = 0; i < 9; i++) {
-        if (9 - shape.shape.width < i) {
+      if(this.shapeCanBePlaced(shape.shape)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private shapeCanBePlaced(shape: IShape): boolean {
+    for (let i = 0; i < 9; i++) {
+      if (9 - shape.width < i) {
+        continue;
+      }
+      for (let j = 0; j < 9; j++) {
+        if (9 - shape.height < j) {
           continue;
         }
-        for (let j = 0; j < 9; j++) {
-          if (9 - shape.shape.height < j) {
-            continue;
-          }
-          if (this.canDropShape(shape.shape, { x: i, y: j })) {
-            return true;
-          }
+        if (this.canDropShape(shape, { x: i, y: j })) {
+          return true;
         }
       }
     }
