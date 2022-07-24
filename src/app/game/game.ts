@@ -70,7 +70,6 @@ export class Game {
                 }
             }
         }
-        console.log(this.shapesByMaxDimension);
     }
 
     storeGame() {
@@ -163,19 +162,12 @@ export class Game {
             maxDimension2 = 8;
         }
 
-        console.log({
-            maxDimension1,
-            maxDimension2,
-            maxDimension3,
-        });
-
         this.nextShapes = [
             { shape: this.getRandomShape(maxDimension1), isDragging: false },
             { shape: this.getRandomShape(maxDimension2), isDragging: false },
             { shape: this.getRandomShape(maxDimension3), isDragging: false },
         ];
         shuffle(this.nextShapes);
-        console.log(this.nextShapes.map(x => this.getShapeDimension(x.shape!)))
     }
 
     private getShapeDimension(shape: IShape) {
