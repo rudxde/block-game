@@ -115,7 +115,7 @@ export class Game {
                     shouldStore = true;
                     continue;
                 }
-                this.gameField[i][j].animationProgress = (this.gameField[i][j].animationProgress ?? 0) + 20;
+                this.gameField[i][j].animationProgress = (this.gameField[i][j].animationProgress ?? 0) + 10;
             }
         }
         if (shouldStore) {

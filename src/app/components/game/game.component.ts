@@ -22,7 +22,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   displayScore$ = new BehaviorSubject<number>(0);
   displayHighScore$ = new BehaviorSubject<number>(0);
 
-  gameEnded$: BehaviorSubject<boolean>  = new BehaviorSubject(false);
+  gameEnded$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   @ViewChild('canvas', { read: ElementRef }) canvas?: ElementRef<HTMLCanvasElement>;
 
@@ -35,7 +35,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     if (!this.canvas) {
       throw new Error('canvas not found!');
     }
-    setInterval(() => this.tick(), 50);
+    setInterval(() => this.tick(), 10);
 
     this.game = new Game();
     this.game.gameEnded$.subscribe(this.gameEnded$);
@@ -51,12 +51,17 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.renderer.draw();
   }
 
+  displayCounterUpdateCoolDown = 0;
   tick() {
     if (!this.game) {
       throw new Error('Game not initialized.');
     }
-    this.updateDisplayCounter(this.game.score, this.displayScore$);
-    this.updateDisplayCounter(this.game.highScore, this.displayHighScore$);
+    if (this.displayCounterUpdateCoolDown === 0) {
+      this.updateDisplayCounter(this.game.score, this.displayScore$);
+      this.updateDisplayCounter(this.game.highScore, this.displayHighScore$);
+      this.displayCounterUpdateCoolDown = 5;
+    }
+    this.displayCounterUpdateCoolDown--;
     this.game.tick();
   }
 
@@ -68,7 +73,7 @@ export class GameComponent implements OnInit, AfterViewInit {
       }
       inc = Math.floor(inc);
       display$.next(display$.value + inc);
-    } else if(goal < display$.value){
+    } else if (goal < display$.value) {
       display$.next(goal);
     }
   }
