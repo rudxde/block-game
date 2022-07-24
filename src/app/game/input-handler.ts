@@ -69,6 +69,10 @@ export class InputHandler {
         }
         this.pointerUp(x, y);
         let selectedNextOne = Math.floor(3 * x / this.renderer.width);
+        if(!this.game.nextShapes[selectedNextOne].shape) {
+            // no shape in this slot
+            return;
+        }
         this.game.nextShapes[selectedNextOne].isDragging = true;
     }
 
