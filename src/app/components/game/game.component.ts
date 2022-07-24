@@ -68,6 +68,8 @@ export class GameComponent implements OnInit, AfterViewInit {
       }
       inc = Math.floor(inc);
       display$.next(display$.value + inc);
+    } else if(goal < display$.value){
+      display$.next(goal);
     }
   }
 
