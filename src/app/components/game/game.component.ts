@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Game } from 'src/app/game/game';
 import { InputHandler } from 'src/app/game/input-handler';
 import { Renderer } from 'src/app/game/renderer';
@@ -22,7 +22,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   displayScore$ = new BehaviorSubject<number>(0);
   displayHighScore$ = new BehaviorSubject<number>(0);
 
-  gameEnded$: Observable<boolean> | undefined;
+  gameEnded$: BehaviorSubject<boolean>  = new BehaviorSubject(false);
 
   @ViewChild('canvas', { read: ElementRef }) canvas?: ElementRef<HTMLCanvasElement>;
 
@@ -38,7 +38,7 @@ export class GameComponent implements OnInit, AfterViewInit {
     setInterval(() => this.tick(), 50);
 
     this.game = new Game();
-    this.gameEnded$ = this.game.gameEnded$;
+    this.game.gameEnded$.subscribe(this.gameEnded$);
     this.renderer = new Renderer(
       this.canvas.nativeElement,
       this.debugMode,
