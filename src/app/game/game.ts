@@ -1,4 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
+import { shuffle } from '../utils/shuffle-array';
 import { cellSizeOfWidth, draggingOffsetY } from './constants';
 import { getShapes, IShape } from './shapes';
 
@@ -34,6 +35,7 @@ export class Game {
     nextShapes: IDraggingShape[] = [];
 
     allShapes: IShape[] = getShapes();
+    shapesByMaxDimension: Map<number, IShape[]> = new Map();
 
     debugMode = false;
 
@@ -50,6 +52,26 @@ export class Game {
 
     highScore = 0;
     lastHighScore = 0;
+
+    constructor() {
+        for (let shape of this.allShapes) {
+            const dim = this.getShapeDimension(shape);
+            if (!this.shapesByMaxDimension.has(dim)) {
+                this.shapesByMaxDimension.set(dim, []);
+            }
+        }
+        const availableDimensions = Array.from(this.shapesByMaxDimension.keys());
+        for (let shape of this.allShapes) {
+            const dim = this.getShapeDimension(shape);
+            for (let k of availableDimensions) {
+                if (k >= dim) {
+                    // continue;
+                    this.shapesByMaxDimension.get(k)!.push(shape);
+                }
+            }
+        }
+        console.log(this.shapesByMaxDimension);
+    }
 
     storeGame() {
         let game: IStoredGame = {
@@ -124,26 +146,50 @@ export class Game {
     }
 
     refillShapes() {
-        this.nextShapes = [
-            { shape: this.getRandomShape(), isDragging: false },
-            { shape: this.getRandomShape(), isDragging: false },
-            { shape: this.getRandomShape(), isDragging: false },
-        ];
+        // The following dimensions exist 2,3.5,4,5,5.5,6,6.5,8
 
-        for (let shape of this.nextShapes) {
-            if (
-                shape.shape!.height + shape.shape!.width < 6
-                && shape.shape!.height < 4
-                && shape.shape!.width < 4
-            ) {
-                return;
-            }
+        let maxDimension1 = 8;
+        let maxDimension2 = 8;
+        let maxDimension3 = 8; // one field can always have all shapes
+
+        if (this.score < 200) {
+            maxDimension1 = 3.5;
+            maxDimension2 = 5.5;
+        } else if (this.score < 500) {
+            maxDimension1 = 5;
+            maxDimension2 = 8;
+        } else if (this.score < 1000) {
+            maxDimension1 = 5.5;
+            maxDimension2 = 8;
         }
-        this.refillShapes();
+
+        console.log({
+            maxDimension1,
+            maxDimension2,
+            maxDimension3,
+        });
+
+        this.nextShapes = [
+            { shape: this.getRandomShape(maxDimension1), isDragging: false },
+            { shape: this.getRandomShape(maxDimension2), isDragging: false },
+            { shape: this.getRandomShape(maxDimension3), isDragging: false },
+        ];
+        shuffle(this.nextShapes);
+        console.log(this.nextShapes.map(x => this.getShapeDimension(x.shape!)))
     }
 
-    getRandomShape(): IShape {
-        return this.allShapes[Math.floor(Math.random() * this.allShapes.length)];
+    private getShapeDimension(shape: IShape) {
+        return shape.width + shape.height +
+            (Math.abs(shape.width - shape.height) / 2);
+    }
+
+    getRandomShape(maxDimension: number): IShape {
+        let shapesByDimension = this.shapesByMaxDimension.get(maxDimension);
+        if (!shapesByDimension) {
+            throw new Error(`unknown shape dimension ${maxDimension}`);
+        }
+        return shapesByDimension[Math.floor(Math.random() * shapesByDimension.length)];
+        // return this.allShapes[Math.floor(Math.random() * this.allShapes.length)];
     }
 
     endGame() {
