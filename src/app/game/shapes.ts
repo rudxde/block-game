@@ -64,6 +64,8 @@ export function getShapes(): IShape[] {
         // big T
         ...transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 1 }, { x: 2, y: 1 }] }, 1, 'vertical'),
         // small L
+        ...transformShape({ id: shapeIdCounter++, height: 2, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }] }, 3, 'no'),
+        // medium L
         ...transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }] }, 3, 'horizontal'),
         // S
         ...transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 2 }] }, 1, 'horizontal'),
@@ -82,5 +84,11 @@ export function getShapes(): IShape[] {
         // slash
         ...transformShape({ id: shapeIdCounter++, height: 2, width: 2, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }] }, 1, 'no'),
         ...transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 }] }, 1, 'no'),
+        // stair
+        // ...transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 }, { x: 0, y: 1 }, { x: 1, y: 2 }] }, 3, 'no'),
+        
+        // L edge
+        // ...transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 2 }, { x: 2, y: 2 }] }, 3, 'no'),
+        
     ];
 }
