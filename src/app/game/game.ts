@@ -206,11 +206,10 @@ export class Game {
         if (!this.canDropShape(draggingShape.shape, position)) {
             return;
         }
+       
         placed = this.placeShape(draggingShape.shape, position);
+        draggingShape.isDragging = true;
         draggingShape.shape = undefined;
-        draggingShape.isDragging = false;
-
-
         this.performChecksAfterPlaced(placed);
     }
 
@@ -232,11 +231,22 @@ export class Game {
     }
 
     setDraggingShape(index: number): void {
-        if (!this.nextShapes[index].shape) {
+        if (!this.nextShapes[index]?.shape) {
             // no shape in this slot
             return;
         }
+        if (!this.shapeCanBePlaced(this.nextShapes[index].shape!)) {
+            return;
+        }
         this.nextShapes[index].isDragging = true;
+    }
+
+    releaseDraggingShape() {
+        let draggingShape = this.getDraggingShape();
+        if (!draggingShape) {
+            return;
+        }
+        draggingShape.isDragging = false;
     }
 
     getDraggingShape(): IDraggingShape | undefined {

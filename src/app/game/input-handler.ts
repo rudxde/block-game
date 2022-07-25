@@ -76,6 +76,7 @@ export class InputHandler {
         }
         const position = this.renderer.getDraggingCellPosition(draggingShape.shape!);
         this.game.placeDragging(draggingShape, position);
+        this.game.releaseDraggingShape();
     }
 
 }
