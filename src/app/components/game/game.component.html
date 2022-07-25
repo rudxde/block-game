@@ -23,8 +23,8 @@
             </span>
             <span *ngIf="!game?.isHighScore">
                 {{t('new_score', {score: (displayScore$ | async)})}}
-                <br>
             </span>
+            <br>
             <button (click)="newGameVerified()">{{t('new_game')}}</button>
         </div>
     </div>
