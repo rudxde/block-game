@@ -3,7 +3,7 @@
   "short_name": "block-game",
   "theme_color": "#4270d8",
   "background_color": "#ffffff",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait",
   "scope": "./",
   "start_url": "./",
