@@ -97,8 +97,8 @@ export class Renderer {
         }
 
         let size = 1;
-        if (field.removed && field.animationProgress) {
-            size -= field.animationProgress / 100;
+        if (field.removed && (field.animationProgress ?? 0) > 0) {
+            size -= field.animationProgress! / 100;
         }
 
 

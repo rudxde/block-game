@@ -206,7 +206,7 @@ export class Game {
         if (!this.canDropShape(draggingShape.shape, position)) {
             return;
         }
-       
+
         placed = this.placeShape(draggingShape.shape, position);
         draggingShape.isDragging = true;
         draggingShape.shape = undefined;
@@ -341,6 +341,18 @@ export class Game {
 
     private eliminateHighlighted(): number {
         let eliminated = 0;
+        let animationProgressOffset = 37;
+        let animationStartField = [9, 9];
+        for (let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+                if (this.gameField[i][j].highlighted) {
+                    if (animationStartField[0] + animationStartField[1] > i + j) {
+                        animationStartField = [i, j];
+                    }
+                }
+            }
+        }
+        let animationStartOffset = animationStartField[0] + animationStartField[1];
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
                 if (this.gameField[i][j].highlighted) {
@@ -348,7 +360,7 @@ export class Game {
                     this.gameField[i][j].placed = false;
                     this.gameField[i][j].marked = false;
                     this.gameField[i][j].removed = true;
-                    this.gameField[i][j].animationProgress = 0;
+                    this.gameField[i][j].animationProgress = (animationStartOffset - i - j) * animationProgressOffset;
                     eliminated++;
                 }
             }
