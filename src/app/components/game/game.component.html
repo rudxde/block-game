@@ -1,27 +1,31 @@
 <div class="game">
-    <div class="score">
+    <div class="score" *transloco="let t, read: 'game'">
         <span class="start-new">
-            <button (click)="game?.newGame()">Neues Spiel</button>
+            <button (click)="game?.newGame()">
+                {{t('new_game')}}
+            </button>
         </span>
         <span class="score-num">
             {{ displayScore$ | async }}
         </span>
         <span class="high-score">
-            High-Score: {{displayHighScore$ | async}}
+            {{t('high_score', {score: (displayHighScore$ | async)})}}
         </span>
     </div>
     <canvas #canvas class="canvas"></canvas>
 
     <div class="game-end" *ngIf="gameEnded$ | async">
-        <div class="game-end-cnt">
-            Game Over:<br>
+        <div class="game-end-cnt" *transloco="let t, read: 'game'">
+            {{t('game_over')}}
+            <br>
             <span *ngIf="game?.isHighScore">
-                Neuer High-Score: {{ displayScore$ | async }}
+                {{t('new_high_score', {score: (displayScore$ | async)})}}
             </span>
             <span *ngIf="!game?.isHighScore">
-                Score: {{ displayScore$ | async }}<br>
+                {{t('new_score', {score: (displayScore$ | async)})}}
+                <br>
             </span>
-            <button (click)="game?.newGame()">neues Spiel</button>
+            <button (click)="game?.newGame()">{{t('new_game')}}</button>
         </div>
     </div>
 </div>

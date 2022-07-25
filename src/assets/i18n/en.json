@@ -1,0 +1,9 @@
+{
+    "game": {
+        "new_game": "new game",
+        "game_over": "Game Over",
+        "high_score": "High-Score: {{ score }}",
+        "new_high_score": "New High-Score: {{ score }}",
+        "new_score": "Score: {{ score }}"
+    }
+}

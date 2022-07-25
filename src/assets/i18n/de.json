@@ -1,0 +1,9 @@
+{
+    "game": {
+        "new_game": "Neues Spiel",
+        "game_over": "Verloren",
+        "high_score": "High-Score: {{ score }}",
+        "new_high_score": "Neuer High-Score: {{ score }}",
+        "new_score": "Score: {{ score }}"
+    }
+}

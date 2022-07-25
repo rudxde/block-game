@@ -5,6 +5,9 @@
   "projects": {
     "block-game": {
       "projectType": "application",
+      "extensions": {
+          "projectType": "application"
+      },
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
