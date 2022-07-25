@@ -209,7 +209,6 @@ export class Renderer {
         }
     }
 
-
     setCanvasSize() {
         let padding = 16;
         if (!this.canvas) {

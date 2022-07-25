@@ -30,16 +30,18 @@ export class GameComponent implements OnInit, AfterViewInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.game = new Game();
+    this.game.gameEnded$.subscribe(this.gameEnded$);
+    this.game.initGame();
   }
 
   ngAfterViewInit(): void {
     if (!this.canvas) {
       throw new Error('canvas not found!');
     }
-    setInterval(() => this.tick(), 10);
-
-    this.game = new Game();
-    this.game.gameEnded$.subscribe(this.gameEnded$);
+    if (!this.game) {
+      throw new Error('Game is not initialized');
+    }
     this.renderer = new Renderer(
       this.canvas.nativeElement,
       this.debugMode,
@@ -48,8 +50,8 @@ export class GameComponent implements OnInit, AfterViewInit {
     this.inputHandler = new InputHandler(this.game, this.renderer);
     this.inputHandler.setupListeners(this.canvas.nativeElement);
     this.renderer.setCanvasSize();
-    this.game.initGame();
     this.renderer.draw();
+    setInterval(() => this.tick(), 10);
   }
 
   displayCounterUpdateCoolDown = 0;
@@ -78,18 +80,20 @@ export class GameComponent implements OnInit, AfterViewInit {
       display$.next(goal);
     }
   }
-  
-  newGame(){
+
+  newGame() {
     this.startNewVerification$.next(true);
   }
-  newGameVerified(){
-    if(!this.game) {
+
+  newGameVerified() {
+    if (!this.game) {
       throw new Error(`Game was not initialized!`);
     }
     this.game.newGame();
     this.startNewVerification$.next(false);
   }
-  newGameAbort(){
+
+  newGameAbort() {
     this.startNewVerification$.next(false);
   }
 
