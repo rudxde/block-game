@@ -4,6 +4,7 @@ COPY ./package.json .
 COPY ./package-lock.json .
 RUN npm ci
 COPY ./angular.json .
+COPY ./ngsw-config.json .
 COPY tsconfig.json .
 COPY tsconfig.app.json .
 COPY src ./src
