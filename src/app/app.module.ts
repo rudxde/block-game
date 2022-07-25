@@ -17,9 +17,7 @@ import { environment } from '../environments/environment';
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
-      // Register the ServiceWorker as soon as the application is stable
-      // or after 5 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:5000'
+      registrationStrategy: 'registerImmediately'
     })
   ],
   providers: [],
