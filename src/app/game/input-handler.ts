@@ -41,8 +41,6 @@ export class InputHandler {
         });
     }
 
-
-
     pointerMove(x: number, y: number) {
         this.dragPosition = { x, y };
         this.renderer.dragPosition = this.dragPosition;
@@ -52,8 +50,6 @@ export class InputHandler {
             const position = this.renderer.getDraggingCellPosition(draggingShape.shape!);
             this.game.markDraggingShape(draggingShape, position);
         }
-        // this.game.markDraggingShape(this.dragPosition);
-        this.game.checkEliminationMarking();
     }
 
     pointerDown(x: number, y: number) {
@@ -61,7 +57,6 @@ export class InputHandler {
             return;
         }
         this.dragPosition = { x, y };
-
         this.renderer.dragPosition.x = x;
         this.renderer.dragPosition.y = y;
         if (y < this.renderer.width + 16) {
@@ -69,11 +64,7 @@ export class InputHandler {
         }
         this.pointerUp(x, y);
         let selectedNextOne = Math.floor(3 * x / this.renderer.width);
-        if(!this.game.nextShapes[selectedNextOne].shape) {
-            // no shape in this slot
-            return;
-        }
-        this.game.nextShapes[selectedNextOne].isDragging = true;
+        this.game.setDraggingShape(selectedNextOne);
     }
 
     pointerUp(x: number, y: number) {
@@ -84,35 +75,7 @@ export class InputHandler {
             return;
         }
         const position = this.renderer.getDraggingCellPosition(draggingShape.shape!);
-        // this.game.markDraggingShape(draggingShape, position);
-        let placed = this.game.placeDragging(draggingShape, position);
-
-        let eliminations = this.game.checkEliminationMarking();
-
-        let eliminated = this.game.eliminateHighlighted();
-
-        let scoreIncrease = placed + eliminated + (eliminations * 9);
-        if (eliminations > 1) {
-            scoreIncrease *= (this.game.streakMultiplier + eliminations);
-        }
-
-        this.game.addToScore(scoreIncrease);
-
-        if (eliminations === 0) {
-            this.game.streakMultiplier = 0;
-        } else {
-            this.game.streakMultiplier += 1;
-        }
-
-        this.game.nextShapes.forEach(x => x.isDragging = false);
-        if (this.game.nextShapes.reduce((acc, val) => acc && !val.shape, true)) {
-            this.game.refillShapes();
-        }
-
-        if (!this.game.canDropAnyOfNextShapes()) {
-            this.game.endGame();
-        }
-        this.game.storeGame();
+        this.game.placeDragging(draggingShape, position);
     }
 
 }

@@ -1,6 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
 import { shuffle } from '../utils/shuffle-array';
-import { cellSizeOfWidth, draggingOffsetY } from './constants';
 import { getShapes, IShape } from './shapes';
 
 interface IField {
@@ -132,7 +131,6 @@ export class Game {
         }
     }
 
-
     newGame() {
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
@@ -179,20 +177,6 @@ export class Game {
         shuffle(this.nextShapes);
     }
 
-    private getShapeDimension(shape: IShape) {
-        return shape.width + shape.height +
-            (Math.abs(shape.width - shape.height) / 2);
-    }
-
-    getRandomShape(maxDimension: number): IShape {
-        let shapesByDimension = this.shapesByMaxDimension.get(maxDimension);
-        if (!shapesByDimension) {
-            throw new Error(`unknown shape dimension ${maxDimension}`);
-        }
-        return shapesByDimension[Math.floor(Math.random() * shapesByDimension.length)];
-        // return this.allShapes[Math.floor(Math.random() * this.allShapes.length)];
-    }
-
     endGame() {
         const lastHighScore = this.highScore;
         this.isHighScore = this.score > lastHighScore;
@@ -200,14 +184,6 @@ export class Game {
             localStorage.setItem('highScore', this.score.toString(10));
         }
         this.gameEnded$.next(true);
-    }
-
-    addToScore(n: number) {
-        this.score += n;
-        if (this.score > this.highScore) {
-            this.highScore = this.score;
-            localStorage.setItem('highScore', this.highScore.toString(10));
-        }
     }
 
 
@@ -218,27 +194,24 @@ export class Game {
         }));
     }
 
-    placeDragging(draggingShape: IDraggingShape, position: { x: number, y: number }): number {
+    placeDragging(draggingShape: IDraggingShape, position: { x: number, y: number }): void {
         let placed = 0;
         this.resetMarkings();
-        // let dragging = this.nextShapes.find(x => x.isDragging);
-        // if (!dragging) {
-        //     return 0;
-        // }
         if (!draggingShape.shape) {
             throw new Error('dragging shape has no shape');
         }
-        // const position = this.getDraggingCellPosition(dragging.shape, dragPosition);
         if (!this.positionIsOnBoard(position)) {
-            return 0;
+            return;
         }
         if (!this.canDropShape(draggingShape.shape, position)) {
-            return 0;
+            return;
         }
         placed = this.placeShape(draggingShape.shape, position);
         draggingShape.shape = undefined;
         draggingShape.isDragging = false;
-        return placed;
+
+
+        this.performChecksAfterPlaced(placed);
     }
 
     markDraggingShape(draggingShape: IDraggingShape, position: { x: number, y: number }) {
@@ -255,6 +228,15 @@ export class Game {
         }
 
         this.markShape(draggingShape.shape, position);
+        this.checkEliminationMarking();
+    }
+
+    setDraggingShape(index: number): void {
+        if (!this.nextShapes[index].shape) {
+            // no shape in this slot
+            return;
+        }
+        this.nextShapes[index].isDragging = true;
     }
 
     getDraggingShape(): IDraggingShape | undefined {
@@ -268,48 +250,32 @@ export class Game {
         return dragging;
     }
 
-    private canDropShape(shape: IShape, position: { x: number; y: number; }): boolean {
-        for (let field of shape.fields) {
-            const x = field.x + position.x;
-            const y = field.y + position.y;
-            if (x >= 9 || y >= 9) {
-                return false;
+    shapeCanBePlaced(shape: IShape): boolean {
+        for (let i = 0; i < 9; i++) {
+            if (9 - shape.width < i) {
+                continue;
             }
-            if (this.gameField[x][y].placed) {
-                return false;
+            for (let j = 0; j < 9; j++) {
+                if (9 - shape.height < j) {
+                    continue;
+                }
+                if (this.canDropShape(shape, { x: i, y: j })) {
+                    return true;
+                }
             }
         }
-        return true;
+        return false;
     }
 
-    private positionIsOnBoard(p: { x: number, y: number }): boolean {
-        if (
-            p.x < 0
-            || p.x >= 9
-            || p.y < 0
-            || p.y >= 9
-        ) {
-            return false;
-        }
-        return true;
-    }
-
-    private markShape(shape: IShape, position: { x: number; y: number; }) {
-        for (let field of shape.fields) {
-            this.gameField[field.x + position.x][field.y + position.y].marked = true;
+    private addToScore(n: number) {
+        this.score += n;
+        if (this.score > this.highScore) {
+            this.highScore = this.score;
+            localStorage.setItem('highScore', this.highScore.toString(10));
         }
     }
 
-    private placeShape(shape: IShape, position: { x: number; y: number; }): number {
-        for (let field of shape.fields) {
-            this.gameField[field.x + position.x][field.y + position.y].placed = true;
-        }
-        return shape.fields.length;
-    }
-
-
-
-    checkEliminationMarking(): number {
+    private checkEliminationMarking(): number {
         let eliminations = 0;
         for (let i = 0; i < 9; i++) {
             let allMarkedX = true;
@@ -363,7 +329,7 @@ export class Game {
         return eliminations;
     }
 
-    eliminateHighlighted(): number {
+    private eliminateHighlighted(): number {
         let eliminated = 0;
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
@@ -380,7 +346,7 @@ export class Game {
         return eliminated;
     }
 
-    canDropAnyOfNextShapes(): boolean {
+    private canDropAnyOfNextShapes(): boolean {
         for (let shape of this.nextShapes) {
             if (!shape.shape) {
                 continue;
@@ -392,38 +358,86 @@ export class Game {
         return false;
     }
 
-    shapeCanBePlaced(shape: IShape): boolean {
-        for (let i = 0; i < 9; i++) {
-            if (9 - shape.width < i) {
-                continue;
-            }
-            for (let j = 0; j < 9; j++) {
-                if (9 - shape.height < j) {
-                    continue;
-                }
-                if (this.canDropShape(shape, { x: i, y: j })) {
-                    return true;
-                }
-            }
+    private performChecksAfterPlaced(placedAmount: number) {
+        let eliminations = this.checkEliminationMarking();
+
+        let eliminated = this.eliminateHighlighted();
+
+        let scoreIncrease = placedAmount + eliminated + (eliminations * 9);
+        if (eliminations > 1) {
+            scoreIncrease *= (this.streakMultiplier + eliminations);
         }
-        return false;
+
+        this.addToScore(scoreIncrease);
+
+        if (eliminations === 0) {
+            this.streakMultiplier = 0;
+        } else {
+            this.streakMultiplier += 1;
+        }
+
+        this.nextShapes.forEach(x => x.isDragging = false);
+        if (this.nextShapes.reduce((acc, val) => acc && !val.shape, true)) {
+            this.refillShapes();
+        }
+
+        if (!this.canDropAnyOfNextShapes()) {
+            this.endGame();
+        }
+        this.storeGame();
     }
 
-    debugShapeCount = 0;
-    nextShape() {
-        if (this.debugMode) {
-            this.nextShapes = [
-                { shape: this.allShapes[this.debugShapeCount], isDragging: false },
-                { shape: this.allShapes[this.debugShapeCount + 1], isDragging: false },
-                { shape: this.allShapes[this.debugShapeCount + 2], isDragging: false },
-            ];
-            this.debugShapeCount += 3;
-            if (this.debugShapeCount >= this.allShapes.length) {
-                this.debugShapeCount = 0;
-            }
-            return;
-        }
-        this.refillShapes();
-
+    private getShapeDimension(shape: IShape) {
+        return shape.width + shape.height +
+            (Math.abs(shape.width - shape.height) / 2);
     }
+
+    private getRandomShape(maxDimension: number): IShape {
+        let shapesByDimension = this.shapesByMaxDimension.get(maxDimension);
+        if (!shapesByDimension) {
+            throw new Error(`unknown shape dimension ${maxDimension}`);
+        }
+        return shapesByDimension[Math.floor(Math.random() * shapesByDimension.length)];
+        // return this.allShapes[Math.floor(Math.random() * this.allShapes.length)];
+    }
+
+    private canDropShape(shape: IShape, position: { x: number; y: number; }): boolean {
+        for (let field of shape.fields) {
+            const x = field.x + position.x;
+            const y = field.y + position.y;
+            if (x >= 9 || y >= 9) {
+                return false;
+            }
+            if (this.gameField[x][y].placed) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private positionIsOnBoard(p: { x: number, y: number }): boolean {
+        if (
+            p.x < 0
+            || p.x >= 9
+            || p.y < 0
+            || p.y >= 9
+        ) {
+            return false;
+        }
+        return true;
+    }
+
+    private markShape(shape: IShape, position: { x: number; y: number; }) {
+        for (let field of shape.fields) {
+            this.gameField[field.x + position.x][field.y + position.y].marked = true;
+        }
+    }
+
+    private placeShape(shape: IShape, position: { x: number; y: number; }): number {
+        for (let field of shape.fields) {
+            this.gameField[field.x + position.x][field.y + position.y].placed = true;
+        }
+        return shape.fields.length;
+    }
+
 }
