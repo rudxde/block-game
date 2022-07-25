@@ -1,6 +1,7 @@
 import { cellSizeOfWidth, draggingOffsetY, fieldBaseColor, fieldDisabledColor, fieldHighlightColor, fieldInnerBorderColor, fieldLineColor, fieldMarkedColor, fieldOuterBorderColor, markedFieldOuterBorderColor, sectorLineColor } from './constants';
 import { Game } from './game';
 import { IShape } from './shapes';
+import { HermiteInterpolation } from 'interpolations';
 
 export class Renderer {
 
@@ -32,7 +33,44 @@ export class Renderer {
         requestAnimationFrame(() => this.draw());
     }
 
-    drawGameField() {
+
+    setCanvasSize() {
+        let padding = 16;
+        if (!this.canvas) {
+            throw new Error('canvas not found!');
+        }
+        let height = window.innerHeight;
+        let width = window.innerWidth;
+        height -= padding * 2;
+        width -= padding * 2;
+        if (width > 500) {
+            width = 500;
+        }
+        if (height > 700) {
+            height = 700;
+        }
+        if (width > height - 200) {
+            width = height - 200;
+        } else {
+            height = width + 200;
+        }
+        this.canvas.height = height;
+        this.canvas.width = width;
+        this.height = height;
+        this.width = width;
+    }
+
+    getDraggingCellPosition(dragging: IShape): { x: number, y: number } {
+        let basePositionX = this.dragPosition.x - (dragging.width * cellSizeOfWidth * this.width / 2);
+        let basePositionY = this.dragPosition.y - (dragging.height * cellSizeOfWidth * this.width) + draggingOffsetY;
+        return {
+            x: Math.round(basePositionX / (this.width * cellSizeOfWidth)),
+            y: Math.round(basePositionY / (this.width * cellSizeOfWidth))
+        }
+    }
+
+
+    private drawGameField() {
         let w = this.width;
 
         const line = (horizontal: boolean, position: number): void => {
@@ -81,7 +119,7 @@ export class Renderer {
 
     }
 
-    drawField(x: number, y: number) {
+    private drawField(x: number, y: number) {
         let w = this.width;
 
         let field = this.game.gameField[x][y];
@@ -125,7 +163,7 @@ export class Renderer {
         }
     }
 
-    drawNextShapes() {
+    private drawNextShapes() {
         let w = this.width;
         let previewSize = (w / 3) - 16;
         let offsetY = w + 16;
@@ -153,43 +191,54 @@ export class Renderer {
             if (!shape.shape || shape.isDragging) {
                 continue;
             }
-            const largestDimension = shape.shape.height > shape.shape.width ? shape.shape.height : shape.shape.width;
-            // let offsetX = 0;
-            let shapeCellSize = (previewSize / largestDimension);
-            if (largestDimension === 2) {
-                shapeCellSize *= 0.66;
-            }
-            if (largestDimension === 1) {
-                shapeCellSize *= 0.33;
-            }
-            let offsetX = i * (previewSize + 16) + ((previewSize - (shapeCellSize * shape.shape.width)) / 2) + 16;
-
+            const { shapeCellSize, offsetX } = this.getPositionOfNextShape(shape.shape, i);
             let shapeIsDisabled = (!this.game.shapeCanBePlaced(shape.shape)) || this.game.gameEnded$.value;
-
             this.drawShape(shape.shape, shapeCellSize, offsetX, offsetY, shapeIsDisabled);
         }
     }
 
-    private drawShape(shape: IShape, shapeCellSize: number, offsetX: number, offsetY: number, disabled: boolean = false) {
+    private getPositionOfNextShape(shape: IShape, index: number): { shapeCellSize: number, offsetX: number, offsetY: number } {
+        let w = this.width;
+        let previewSize = (w / 3) - 16;
+        let offsetY = w + 16;
+        const largestDimension = shape.height > shape.width ? shape.height : shape.width;
+        // let offsetX = 0;
+        let shapeCellSize = (previewSize / largestDimension);
+        if (largestDimension === 2) {
+            shapeCellSize *= 0.66;
+        }
+        if (largestDimension === 1) {
+            shapeCellSize *= 0.33;
+        }
+        let offsetX = index * (previewSize + 16) + ((previewSize - (shapeCellSize * shape.width)) / 2) + 16;
+        return {
+            shapeCellSize,
+            offsetX,
+            offsetY,
+        }
+    }
+
+    private drawShape(shape: IShape, shapeCellSize: number, offsetX: number, offsetY: number, disabled: boolean = false, blockScale = 1) {
         if (this.debugMode) {
             this.ctx.fillStyle = '#000';
             this.ctx.fillText(`id: ${shape.id}`, offsetX, offsetY);
         }
         for (let field of shape.fields) {
-            let x = (field.x * shapeCellSize) + offsetX;
-            let y = (field.y * shapeCellSize) + offsetY;
+            let x = (field.x * shapeCellSize) + offsetX + (1 - blockScale) * shapeCellSize;
+            let y = (field.y * shapeCellSize) + offsetY + (1 - blockScale) * shapeCellSize;
+            let scaledShapeCellSize = shapeCellSize * blockScale;
             if (disabled) {
                 this.ctx.fillStyle = fieldDisabledColor;
             } else {
                 this.ctx.fillStyle = fieldBaseColor;
             }
-            this.ctx.fillRect(x, y, shapeCellSize, shapeCellSize);
+            this.ctx.fillRect(x, y, scaledShapeCellSize, scaledShapeCellSize);
 
             this.ctx.lineWidth = 1;
             this.ctx.strokeStyle = fieldOuterBorderColor;
-            this.ctx.strokeRect(x, y, shapeCellSize, shapeCellSize);
+            this.ctx.strokeRect(x, y, scaledShapeCellSize, scaledShapeCellSize);
             this.ctx.strokeStyle = fieldInnerBorderColor;
-            this.ctx.strokeRect(x + 1, y + 1, shapeCellSize - 2, shapeCellSize - 2);
+            this.ctx.strokeRect(x + 1, y + 1, scaledShapeCellSize - 2, scaledShapeCellSize - 2);
 
             if (this.debugMode) {
                 this.ctx.fillStyle = '#FFF';
@@ -198,50 +247,41 @@ export class Renderer {
         }
     }
 
-    drawDraggingShape() {
-        for (let shape of this.game.nextShapes) {
-            if (!shape.shape || !shape.isDragging) {
-                continue;
+    pickInterpolations: {
+        offsetXInterpolation: HermiteInterpolation;
+        offsetYInterpolation: HermiteInterpolation;
+        shapeCellSizeInterpolation: HermiteInterpolation;
+        blockScaleSizeInterpolation: HermiteInterpolation;
+    } | undefined;
+
+    private drawDraggingShape() {
+        const draggingShape = this.game.getDraggingShape();
+        if (!draggingShape || !draggingShape.shape) {
+            return;
+        }
+        let offsetX = this.dragPosition.x - (draggingShape.shape.width * cellSizeOfWidth * this.width / 2);
+        let offsetY = this.dragPosition.y - (draggingShape.shape.height * cellSizeOfWidth * this.width) + draggingOffsetY;
+        let shapeCellSize = this.width * cellSizeOfWidth;
+        let blockScale = 0.75;
+        if (draggingShape.pickAnimation) {
+            if (!this.pickInterpolations) {
+                let sourcePositions = this.getPositionOfNextShape(draggingShape.shape, draggingShape.index);
+                this.pickInterpolations = {
+                    offsetXInterpolation: new HermiteInterpolation(0, 100, sourcePositions.offsetX, offsetX),
+                    offsetYInterpolation: new HermiteInterpolation(0, 100, sourcePositions.offsetY, offsetY),
+                    shapeCellSizeInterpolation: new HermiteInterpolation(0, 100, sourcePositions.shapeCellSize, shapeCellSize),
+                    blockScaleSizeInterpolation: new HermiteInterpolation(0, 100, 1, blockScale),
+                }
             }
-            let offsetX = this.dragPosition.x - (shape.shape.width * cellSizeOfWidth * this.width / 2);
-            let offsetY = this.dragPosition.y - (shape.shape.height * cellSizeOfWidth * this.width) + draggingOffsetY;
-            this.drawShape(shape.shape, this.width * cellSizeOfWidth, offsetX, offsetY);
-        }
-    }
-
-    setCanvasSize() {
-        let padding = 16;
-        if (!this.canvas) {
-            throw new Error('canvas not found!');
-        }
-        let height = window.innerHeight;
-        let width = window.innerWidth;
-        height -= padding * 2;
-        width -= padding * 2;
-        if (width > 500) {
-            width = 500;
-        }
-        if (height > 700) {
-            height = 700;
-        }
-        if (width > height - 200) {
-            width = height - 200;
+            offsetX = this.pickInterpolations.offsetXInterpolation.eval(draggingShape.pickAnimation);
+            offsetY = this.pickInterpolations.offsetYInterpolation.eval(draggingShape.pickAnimation);
+            shapeCellSize = this.pickInterpolations.shapeCellSizeInterpolation.eval(draggingShape.pickAnimation);
+            blockScale = this.pickInterpolations.blockScaleSizeInterpolation.eval(draggingShape.pickAnimation);
         } else {
-            height = width + 200;
+            this.pickInterpolations = undefined;
         }
-        this.canvas.height = height;
-        this.canvas.width = width;
-        this.height = height;
-        this.width = width;
-    }
 
-    getDraggingCellPosition(dragging: IShape): { x: number, y: number } {
-        let basePositionX = this.dragPosition.x - (dragging.width * cellSizeOfWidth * this.width / 2);
-        let basePositionY = this.dragPosition.y - (dragging.height * cellSizeOfWidth * this.width) + draggingOffsetY;
-        return {
-            x: Math.round(basePositionX / (this.width * cellSizeOfWidth)),
-            y: Math.round(basePositionY / (this.width * cellSizeOfWidth))
-        }
+        this.drawShape(draggingShape.shape, shapeCellSize, offsetX, offsetY, undefined, blockScale);
     }
 
 }

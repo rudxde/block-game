@@ -15,7 +15,7 @@ interface IField {
 interface IStoredGame {
     score: number;
     gameField: IField[][];
-    nextShapes: { shape?: IShape, isDragging: boolean }[];
+    nextShapes: IDraggingShape[];
     gameEnded: boolean;
     streakMultiplier: number;
 }
@@ -24,6 +24,8 @@ interface IStoredGame {
 interface IDraggingShape {
     shape?: IShape;
     isDragging: boolean;
+    pickAnimation?: number;
+    index: number;
 }
 
 export class Game {
@@ -126,6 +128,13 @@ export class Game {
                 this.gameField[i][j].animationProgress = (this.gameField[i][j].animationProgress ?? 0) + 10;
             }
         }
+        const draggingShape = this.getDraggingShape();
+        if (draggingShape && draggingShape.pickAnimation) {
+            draggingShape.pickAnimation+=10;
+            if (draggingShape.pickAnimation >= 100) {
+                draggingShape.pickAnimation = undefined;
+            }
+        }
         if (shouldStore) {
             this.storeGame();
         }
@@ -170,11 +179,12 @@ export class Game {
         }
 
         this.nextShapes = [
-            { shape: this.getRandomShape(maxDimension1), isDragging: false },
-            { shape: this.getRandomShape(maxDimension2), isDragging: false },
-            { shape: this.getRandomShape(maxDimension3), isDragging: false },
+            { shape: this.getRandomShape(maxDimension1), isDragging: false, index: 0 },
+            { shape: this.getRandomShape(maxDimension2), isDragging: false, index: 0 },
+            { shape: this.getRandomShape(maxDimension3), isDragging: false, index: 0 },
         ];
         shuffle(this.nextShapes);
+        this.nextShapes.forEach((x, i) => x.index = i);
     }
 
     endGame() {
@@ -238,6 +248,7 @@ export class Game {
             return;
         }
         this.nextShapes[index].isDragging = true;
+        this.nextShapes[index].pickAnimation = 1;
     }
 
     releaseDraggingShape() {
