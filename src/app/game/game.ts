@@ -178,8 +178,7 @@ export class Game {
     }
 
     endGame() {
-        const lastHighScore = this.highScore;
-        this.isHighScore = this.score > lastHighScore;
+        this.isHighScore = this.score > this.lastHighScore;
         if (this.isHighScore) {
             localStorage.setItem('highScore', this.score.toString(10));
         }
