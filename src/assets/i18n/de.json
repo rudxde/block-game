@@ -4,6 +4,8 @@
         "game_over": "Verloren",
         "high_score": "High-Score: {{ score }}",
         "new_high_score": "Neuer High-Score: {{ score }}",
-        "new_score": "Score: {{ score }}"
+        "new_score": "Score: {{ score }}",
+        "start-new-game-sure": "Sicher dass du ein neues Spiel starten möchtest?",
+        "abort": "Abbrechen"
     }
 }

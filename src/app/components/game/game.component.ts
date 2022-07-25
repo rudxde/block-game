@@ -23,6 +23,7 @@ export class GameComponent implements OnInit, AfterViewInit {
   displayHighScore$ = new BehaviorSubject<number>(0);
 
   gameEnded$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  startNewVerification$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   @ViewChild('canvas', { read: ElementRef }) canvas?: ElementRef<HTMLCanvasElement>;
 
@@ -76,6 +77,20 @@ export class GameComponent implements OnInit, AfterViewInit {
     } else if (goal < display$.value) {
       display$.next(goal);
     }
+  }
+  
+  newGame(){
+    this.startNewVerification$.next(true);
+  }
+  newGameVerified(){
+    if(!this.game) {
+      throw new Error(`Game was not initialized!`);
+    }
+    this.game.newGame();
+    this.startNewVerification$.next(false);
+  }
+  newGameAbort(){
+    this.startNewVerification$.next(false);
   }
 
 }

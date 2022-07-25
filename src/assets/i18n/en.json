@@ -4,6 +4,8 @@
         "game_over": "Game Over",
         "high_score": "High-Score: {{ score }}",
         "new_high_score": "New High-Score: {{ score }}",
-        "new_score": "Score: {{ score }}"
+        "new_score": "Score: {{ score }}",
+        "start-new-game-sure": "Sure you want to start a new game?",
+        "abort": "abort"
     }
 }

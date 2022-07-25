@@ -1,7 +1,7 @@
 <div class="game">
     <div class="score" *transloco="let t, read: 'game'">
         <span class="start-new">
-            <button (click)="game?.newGame()">
+            <button (click)="newGame()">
                 {{t('new_game')}}
             </button>
         </span>
@@ -14,7 +14,7 @@
     </div>
     <canvas #canvas class="canvas"></canvas>
 
-    <div class="game-end" *ngIf="gameEnded$ | async">
+    <div class="game-end overlay" *ngIf="gameEnded$ | async">
         <div class="game-end-cnt" *transloco="let t, read: 'game'">
             {{t('game_over')}}
             <br>
@@ -25,7 +25,16 @@
                 {{t('new_score', {score: (displayScore$ | async)})}}
                 <br>
             </span>
-            <button (click)="game?.newGame()">{{t('new_game')}}</button>
+            <button (click)="newGameVerified()">{{t('new_game')}}</button>
+        </div>
+    </div>
+
+    <div class="start-new-verification overlay" *ngIf="startNewVerification$ | async">
+        <div class="start-new-verification-cnt" *transloco="let t, read: 'game'">
+            {{t('start-new-game-sure')}}
+            <br/>
+            <button (click)="newGameVerified()">{{t('new_game')}}</button>
+            <button (click)="newGameAbort()">{{t('abort')}}</button>
         </div>
     </div>
 </div>
