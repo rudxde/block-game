@@ -54,6 +54,15 @@ export class Game {
     lastHighScore = 0;
 
     constructor() {
+        this.gameField = new Array(9).fill(undefined).map((_, x) => new Array(9).fill(undefined).map((_, y) => (<IField>{
+            x,
+            y,
+            placed: false,
+            highlighted: false,
+            marked: false,
+            removed: false,
+        })));
+
         for (let shape of this.allShapes) {
             const dim = this.getShapeDimension(shape);
             if (!this.shapesByMaxDimension.has(dim)) {
