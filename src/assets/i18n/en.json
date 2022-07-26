@@ -9,6 +9,7 @@
         "abort": "abort"
     },
     "menu": {
+        "game_title": "Block Game",
         "game": "Play",
         "baby_mode": "Baby Mode",
         "settings": "Settings"

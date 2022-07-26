@@ -1,10 +1,14 @@
 <mat-drawer-container>
     <mat-drawer #drawer mode="over">
         <div class="menu" *transloco="let t, read: 'menu'">
-            <!-- <button mat-button (click)="openLink(['game'])">{{t('game')}}</button>
-            <button mat-button (click)="openLink(['game', 'baby_mode'])">{{t('baby_mode')}}</button>
-            <button mat-button (click)="openLink(['settings'])">{{t('settings')}}</button> -->
 
+            <div class="title">
+                <img class="icon" src="/assets/icons/icon-512x512.png" alt="Logo">
+                <h3>
+                    {{t('game_title')}}
+                </h3>
+            </div>
+            
             <app-menu-button class="menu-button" [link]="['game']" [text]="t('game')" (clicked)="drawer.toggle()">
             </app-menu-button>
             <app-menu-button class="menu-button" [link]="['game', 'baby_mode']" [text]="t('baby_mode')"

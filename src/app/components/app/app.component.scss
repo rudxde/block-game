@@ -9,6 +9,16 @@ mat-drawer-container {
     height: 100%;
     gap: 16px;
     width: 80vw;
+    .title {
+        display: grid;
+        justify-items: center;
+        margin-bottom: 32px;
+        img {
+            height: 100px;
+            width: 100px;
+            border-radius: 50px;
+        }
+    }
     .spacer{
         flex-grow: 1;
     }
