@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MenuBarService } from 'src/app/services/menu-bar.service';
 
 @Component({
   selector: 'app-settings',
@@ -8,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 export class SettingsComponent implements OnInit {
 
   constructor(
+    private menuBarService: MenuBarService,
+
   ) { }
 
   ngOnInit(): void {
+    this.menuBarService.set('settings');
   }
 
 

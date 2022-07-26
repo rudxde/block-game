@@ -4,17 +4,32 @@
             <!-- <button mat-button (click)="openLink(['game'])">{{t('game')}}</button>
             <button mat-button (click)="openLink(['game', 'baby_mode'])">{{t('baby_mode')}}</button>
             <button mat-button (click)="openLink(['settings'])">{{t('settings')}}</button> -->
-            
-            <app-menu-button class="menu-button" [link]="['game']" [text]="t('game')" (clicked)="drawer.toggle()"></app-menu-button>
-            <app-menu-button class="menu-button" [link]="['game', 'baby_mode']" [text]="t('baby_mode')" (clicked)="drawer.toggle()"></app-menu-button>
-            <app-menu-button class="menu-button" [link]="['settings']" [text]="t('settings')" (clicked)="drawer.toggle()"></app-menu-button>
+
+            <app-menu-button class="menu-button" [link]="['game']" [text]="t('game')" (clicked)="drawer.toggle()">
+            </app-menu-button>
+            <app-menu-button class="menu-button" [link]="['game', 'baby_mode']" [text]="t('baby_mode')"
+                (clicked)="drawer.toggle()"></app-menu-button>
+            <app-menu-button class="menu-button" [link]="['settings']" [text]="t('settings')"
+                (clicked)="drawer.toggle()"></app-menu-button>
         </div>
-        </mat-drawer>
+    </mat-drawer>
     <mat-drawer-content>
-        <mat-toolbar>
-            <button mat-icon-button (click)="drawer.toggle()">
+        <mat-toolbar class="toolbar" *transloco="let t, read: 'toolbar'">
+            <button class="toggle-menu" mat-icon-button (click)="drawer.toggle()">
                 <mat-icon>menu</mat-icon>
             </button>
+
+            <span class="title" *ngIf="title$ | async as title">
+                <h3>
+                    {{ t(title) }}
+                </h3>
+            </span>
+
+            <span class="action-button" *ngIf="actionButton$ | async as actionButton">
+                <button mat-icon-button (click)="actionButton.click()" [title]="actionButton.title">
+                    <mat-icon>{{actionButton.icon}}</mat-icon>
+                </button>
+            </span>
         </mat-toolbar>
         <router-outlet></router-outlet>
     </mat-drawer-content>

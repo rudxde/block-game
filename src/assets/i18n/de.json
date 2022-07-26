@@ -12,5 +12,9 @@
         "game": "Spielen",
         "baby_mode": "Baby Modus",
         "settings": "Einstellungen"
+    },
+    "toolbar": {
+        "baby": "Baby Modus",
+        "settings": "Einstellungen"
     }
 }

@@ -1,10 +1,5 @@
 <div class="game">
     <div class="score" *transloco="let t, read: 'game'">
-        <span class="start-new">
-            <button (click)="newGame()">
-                {{t('new_game')}}
-            </button>
-        </span>
         <span class="score-num">
             {{ displayScore$ | async }}
         </span>

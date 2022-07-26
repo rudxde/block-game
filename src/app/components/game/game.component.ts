@@ -1,10 +1,11 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { Game } from 'src/app/game/game';
 import { InputHandler } from 'src/app/game/input-handler';
 import { gameModeFactory } from 'src/app/game/modes/mode-factory';
 import { Renderer } from 'src/app/game/renderer';
+import { MenuBarService } from 'src/app/services/menu-bar.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private activatedRoute: ActivatedRoute,
+    private menuBarService: MenuBarService,
   ) { }
 
   ngOnInit(): void {
@@ -43,9 +45,19 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe({
         next: params => {
           let mode: 'default' | 'baby' = 'default';
-          if(params['mode'] === 'baby_mode') {
+          if (params['mode'] === 'baby_mode') {
             mode = 'baby'
           }
+
+          this.menuBarService.set(
+            (mode === 'default' ? undefined : mode),
+            {
+              icon: 'replay',
+              title: 'new Game',
+              click: () => this.newGame(),
+            }
+          );
+
           this.game = new Game(gameModeFactory(mode));
           this.game.gameEnded$.subscribe(this.gameEnded$);
           this.game.initGame();
