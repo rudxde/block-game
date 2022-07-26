@@ -1,0 +1,15 @@
+mat-drawer-container {
+    height: 100vh;
+}
+
+.menu {
+    margin-top: 32px;
+    padding: 16px;
+    display: grid;
+    gap: 16px;
+    width: 80vw;
+    menu-button {
+        width: 100%;
+        font-size: 1.2em;
+    }
+}

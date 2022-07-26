@@ -1,5 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { shuffle } from '../utils/shuffle-array';
+import { migrateStore } from './migrate-store';
+import { IGameMode } from './modes';
 import { getShapes, IShape } from './shapes';
 
 interface IField {
@@ -54,7 +56,9 @@ export class Game {
     highScore = 0;
     lastHighScore = 0;
 
-    constructor() {
+    constructor(
+        private gameMode: IGameMode,
+    ) {
         this.gameField = new Array(9).fill(undefined).map((_, x) => new Array(9).fill(undefined).map((_, y) => (<IField>{
             x,
             y,
@@ -90,16 +94,17 @@ export class Game {
             gameEnded: this.gameEnded$.value,
             streakMultiplier: this.streakMultiplier,
         };
-        localStorage.setItem('store', JSON.stringify(game));
+        localStorage.setItem(this.gameMode.name + '_store', JSON.stringify(game));
     }
 
     initGame() {
+        migrateStore()
         this.loadStoredGame();
     }
 
     loadStoredGame() {
-        this.highScore = parseInt(localStorage.getItem('highScore') ?? '0');
-        const storedGameJson = localStorage.getItem('store');
+        this.highScore = parseInt(localStorage.getItem(this.gameMode.name + '_highScore') ?? '0');
+        const storedGameJson = localStorage.getItem(this.gameMode.name + '_store');
         if (!storedGameJson) {
             this.newGame();
             return;
@@ -130,7 +135,7 @@ export class Game {
         }
         const draggingShape = this.getDraggingShape();
         if (draggingShape && draggingShape.pickAnimation) {
-            draggingShape.pickAnimation+=10;
+            draggingShape.pickAnimation += 10;
             if (draggingShape.pickAnimation >= 100) {
                 draggingShape.pickAnimation = undefined;
             }
@@ -155,7 +160,7 @@ export class Game {
         this.refillShapes();
         this.score = 0;
         this.gameEnded$.next(false);
-        this.highScore = parseInt(localStorage.getItem('highScore') ?? '0');
+        this.highScore = parseInt(localStorage.getItem(this.gameMode.name + '_highScore') ?? '0');
         this.lastHighScore = this.highScore;
         this.storeGame();
     }
@@ -163,20 +168,7 @@ export class Game {
     refillShapes() {
         // The following dimensions exist 2,3.5,4,5,5.5,6,6.5,8
 
-        let maxDimension1 = 8;
-        let maxDimension2 = 8;
-        let maxDimension3 = 8; // one field can always have all shapes
-
-        if (this.score < 200) {
-            maxDimension1 = 3.5;
-            maxDimension2 = 5.5;
-        } else if (this.score < 500) {
-            maxDimension1 = 5;
-            maxDimension2 = 8;
-        } else if (this.score < 1000) {
-            maxDimension1 = 5.5;
-            maxDimension2 = 8;
-        }
+        let { maxDimension1, maxDimension2, maxDimension3 } = this.gameMode.getRefillShapeDimensionLimit(this);
 
         this.nextShapes = [
             { shape: this.getRandomShape(maxDimension1), isDragging: false, index: 0 },
@@ -187,10 +179,11 @@ export class Game {
         this.nextShapes.forEach((x, i) => x.index = i);
     }
 
+
     endGame() {
         this.isHighScore = this.score > this.lastHighScore;
         if (this.isHighScore) {
-            localStorage.setItem('highScore', this.score.toString(10));
+            localStorage.setItem(this.gameMode.name + '_highScore', this.score.toString(10));
         }
         this.gameEnded$.next(true);
     }
@@ -291,7 +284,7 @@ export class Game {
         this.score += n;
         if (this.score > this.highScore) {
             this.highScore = this.score;
-            localStorage.setItem('highScore', this.highScore.toString(10));
+            localStorage.setItem(this.gameMode.name + '_highScore', this.highScore.toString(10));
         }
     }
 

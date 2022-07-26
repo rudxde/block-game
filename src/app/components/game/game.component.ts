@@ -1,7 +1,9 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
 import { Game } from 'src/app/game/game';
 import { InputHandler } from 'src/app/game/input-handler';
+import { gameModeFactory } from 'src/app/game/modes/mode-factory';
 import { Renderer } from 'src/app/game/renderer';
 
 
@@ -10,7 +12,7 @@ import { Renderer } from 'src/app/game/renderer';
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss']
 })
-export class GameComponent implements OnInit, AfterViewInit {
+export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
   debugMode = false;
 
@@ -24,15 +26,35 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   gameEnded$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   startNewVerification$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  destroy$ = new Subject<void>();
 
   @ViewChild('canvas', { read: ElementRef }) canvas?: ElementRef<HTMLCanvasElement>;
 
-  constructor() { }
+  constructor(
+    private activatedRoute: ActivatedRoute,
+  ) { }
 
   ngOnInit(): void {
-    this.game = new Game();
-    this.game.gameEnded$.subscribe(this.gameEnded$);
-    this.game.initGame();
+
+    this.activatedRoute.params
+      .pipe(
+        takeUntil(this.destroy$),
+      )
+      .subscribe({
+        next: params => {
+          let mode: 'default' | 'baby' = 'default';
+          if(params['mode'] === 'baby_mode') {
+            mode = 'baby'
+          }
+          this.game = new Game(gameModeFactory(mode));
+          this.game.gameEnded$.subscribe(this.gameEnded$);
+          this.game.initGame();
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
   }
 
   ngAfterViewInit(): void {

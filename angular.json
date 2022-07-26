@@ -33,7 +33,12 @@
             ],
             "scripts": [],
             "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.json"
+            "ngswConfigPath": "ngsw-config.json",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/style"
+              ]
+            }
           },
           "configurations": {
             "production": {

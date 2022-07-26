@@ -7,5 +7,10 @@
         "new_score": "Score: {{ score }}",
         "start-new-game-sure": "Sicher dass du ein neues Spiel starten möchtest?",
         "abort": "Abbrechen"
+    },
+    "menu": {
+        "game": "Spielen",
+        "baby_mode": "Baby Modus",
+        "settings": "Einstellungen"
     }
 }

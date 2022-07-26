@@ -1,0 +1,7 @@
+<div *ngIf="(isActivatedRoute$ | async); else inactiveRoute">
+    <button mat-raised-button (click)="openLink(link)">{{text}}</button>
+</div>
+
+<ng-template #inactiveRoute>
+    <button mat-button (click)="openLink(link)">{{text}}</button>
+</ng-template>

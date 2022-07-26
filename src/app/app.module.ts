@@ -9,11 +9,21 @@ import { environment } from '../environments/environment';
 import { TranslocoRootModule } from './transloco-root.module';
 import { HttpClientModule } from '@angular/common/http';
 import { TranslocoService } from '@ngneat/transloco';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { SettingsComponent } from './components/settings/settings.component';
+import { MenuButtonComponent } from './components/menu-button/menu-button.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    GameComponent
+    GameComponent,
+    SettingsComponent,
+    MenuButtonComponent,
   ],
   imports: [
     BrowserModule,
@@ -24,6 +34,11 @@ import { TranslocoService } from '@ngneat/transloco';
     }),
     HttpClientModule,
     TranslocoRootModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule,
+    MatSidenavModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
@@ -32,7 +47,7 @@ export class AppModule {
   constructor(translocoService: TranslocoService) {
     // const userLang = navigator.language || navigator.userLanguage;
     let language = navigator.language;
-    if(language.indexOf('-')) {
+    if (language.indexOf('-')) {
       language = language.split('-')[0];
     }
     if (!translocoService.isLang(language)) {

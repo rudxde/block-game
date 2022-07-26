@@ -7,5 +7,10 @@
         "new_score": "Score: {{ score }}",
         "start-new-game-sure": "Sure you want to start a new game?",
         "abort": "abort"
+    },
+    "menu": {
+        "game": "Play",
+        "baby_mode": "Baby Mode",
+        "settings": "Settings"
     }
 }
