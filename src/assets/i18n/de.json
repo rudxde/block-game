@@ -16,5 +16,13 @@
     "toolbar": {
         "baby": "Baby Modus",
         "settings": "Einstellungen"
+    },
+    "settings": {
+        "select_lang": "Sprache auswählen:",
+        "3rdpartylicenses": "Open Source Lizenzen",
+        "languages": {
+            "de": "Deutsch",
+            "en": "Englisch"
+        }
     }
 }

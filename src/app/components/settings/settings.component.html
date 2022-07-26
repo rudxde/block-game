@@ -1,0 +1,15 @@
+<div class="settings" *transloco="let t, read: 'settings'">
+  <div class="language-select">
+    <mat-form-field>
+      <mat-label>{{t('select_lang')}}</mat-label>
+      <mat-select [value]="activeLang" (selectionChange)="selectLang($event.value)">
+        <mat-option *ngFor="let lang of availableLangs" [value]="lang">
+          {{t('languages.' + lang)}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div>
+    <a href="/3rdpartylicenses.txt">{{t('3rdpartylicenses')}}</a>
+  </div>
+</div>

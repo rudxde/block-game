@@ -15,6 +15,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { SettingsComponent } from './components/settings/settings.component';
 import { MenuButtonComponent } from './components/menu-button/menu-button.component';
 
@@ -39,6 +41,8 @@ import { MenuButtonComponent } from './components/menu-button/menu-button.compon
     MatIconModule,
     MatButtonModule,
     MatSidenavModule,
+    MatSelectModule,
+    MatFormFieldModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
@@ -47,6 +51,10 @@ export class AppModule {
   constructor(translocoService: TranslocoService) {
     // const userLang = navigator.language || navigator.userLanguage;
     let language = navigator.language;
+    let localStorageLanguage = localStorage.getItem('language');
+    if(localStorageLanguage) {
+      language = localStorageLanguage;
+    }
     if (language.indexOf('-')) {
       language = language.split('-')[0];
     }
