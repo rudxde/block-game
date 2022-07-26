@@ -26,6 +26,7 @@
         display: grid;
         justify-items: center;
         align-items: center;
+        line-height: 1.1em;
 
 
         button {
@@ -36,11 +37,6 @@
             padding: 16px;
             margin: 16px;
         }
-    }
-
-
-    .start-new-verification-cnt {
-        line-height: 1.1em;
     }
 
     .score {
