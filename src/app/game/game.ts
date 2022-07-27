@@ -104,10 +104,10 @@ export class Game {
 
     initGame() {
         migrateStore()
-        this.loadStoredGame();
-        if(this.gameMode.init) {
+        if (this.gameMode.init) {
             this.gameMode.init(this);
         }
+        this.loadStoredGame();
     }
 
     loadStoredGame() {
