@@ -11,8 +11,9 @@ export class ExtremeGameMode implements IGameMode {
             ...Shapes.lEdge,
             ...Shapes.rectangle,
             ...Shapes.bigCShape,
-            ...Shapes.bigSquare,
-            ...Shapes.extremeSquare,
+            ...Shapes.square3,
+            ...Shapes.square4,
+            ...Shapes.square5,
         );
         game.setupShapeDimensionMap();
     }
@@ -21,10 +22,14 @@ export class ExtremeGameMode implements IGameMode {
         // The following dimensions exist 2,3.5,4,5,5.5,6,6.5,8
         let maxDimension1 = 8;
         let maxDimension2 = 8;
-        let maxDimension3 = 10;
+        let maxDimension3 = 8;
         let minDimension1 = 5;
         let minDimension2 = 5;
         let minDimension3 = 5;
+
+        if (game.score === 0) {
+            maxDimension3 = 10;
+        }
 
         if (game.score < 100) {
             minDimension1 = 4;

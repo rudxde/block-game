@@ -57,12 +57,20 @@ function transformShape(shape: IShape, rotations: number, mirror: 'no' | 'horizo
     return result;
 }
 
+function generateSquare(size: number) {
+    let fields: { x: number; y: number; }[] = [];
+    for (let x = 0; x < size; x++) {
+        for (let y = 0; y < size; y++) {
+            fields.push(({ x, y }));
+        }
+    }
+    return { id: shapeIdCounter++, height: size, width: size, fields };
+}
 export const Shapes = {
     smallT: transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 1 }] }, 1, 'vertical'),
     bigT: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 1 }, { x: 2, y: 1 }] }, 1, 'vertical'),
     mediumL: transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }] }, 3, 'horizontal'),
     sShape: transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 2 }] }, 1, 'horizontal'),
-    square: transformShape({ id: shapeIdCounter++, height: 2, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 0 }, { x: 1, y: 1 }] }, 0, 'no'),
     bigL: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 2 }, { x: 2, y: 2 }] }, 3, 'no'),
     cShape: transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }, { x: 1, y: 2 },] }, 3, 'no'),
     bigCShape: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }, { x: 1, y: 2 }, { x: 2, y: 0 }, { x: 2, y: 2 }] }, 3, 'no'),
@@ -77,18 +85,10 @@ export const Shapes = {
     stair: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 }, { x: 0, y: 1 }, { x: 1, y: 2 }] }, 3, 'no'),
     lEdge: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 2 }, { x: 2, y: 2 }] }, 3, 'no'),
     rectangle: transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 2 }] }, 1, 'no'),
-    bigSquare: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 2, y: 0 }, { x: 2, y: 1 }, { x: 2, y: 2 }] }, 1, 'no'),
-    extremeSquare: transformShape({
-        id: shapeIdCounter++, height: 5, width: 5, fields: (() => {
-            let result: { x: number, y: number }[] = [];
-            for (let x = 0; x < 5; x++) {
-                for (let y = 0; y < 5; y++) {
-                    result.push(({ x, y }));
-                }
-            }
-            return result;
-        })()
-    }, 1, 'no'),
+    square2: [generateSquare(2)],
+    square3: [generateSquare(3)],
+    square4: [generateSquare(4)],
+    square5: [generateSquare(5)],
 }
 
 export function getShapes(): IShape[] {
@@ -98,7 +98,7 @@ export function getShapes(): IShape[] {
         ...Shapes.smallL,
         ...Shapes.mediumL,
         ...Shapes.sShape,
-        ...Shapes.square,
+        ...Shapes.square2,
         ...Shapes.bigL,
         ...Shapes.cShape,
         ...Shapes.stick1,
