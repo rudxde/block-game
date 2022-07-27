@@ -165,6 +165,7 @@ export class Game {
                 // this.gameField[i][j].removed = true;
             }
         }
+        this.isHighScore = false;
         this.refillShapes();
         this.score = 0;
         this.gameEnded$.next(false);
