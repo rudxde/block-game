@@ -57,38 +57,56 @@ function transformShape(shape: IShape, rotations: number, mirror: 'no' | 'horizo
     return result;
 }
 
+export const Shapes = {
+    smallT: transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 1 }] }, 1, 'vertical'),
+    bigT: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 1 }, { x: 2, y: 1 }] }, 1, 'vertical'),
+    mediumL: transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }] }, 3, 'horizontal'),
+    sShape: transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 2 }] }, 1, 'horizontal'),
+    square: transformShape({ id: shapeIdCounter++, height: 2, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 0 }, { x: 1, y: 1 }] }, 0, 'no'),
+    bigL: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 2 }, { x: 2, y: 2 }] }, 3, 'no'),
+    cShape: transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }, { x: 1, y: 2 },] }, 3, 'no'),
+    bigCShape: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }, { x: 1, y: 2 }, { x: 2, y: 0 }, { x: 2, y: 2 }] }, 3, 'no'),
+    smallL: transformShape({ id: shapeIdCounter++, height: 2, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }] }, 3, 'no'),
+    stick1: transformShape({ id: shapeIdCounter++, height: 1, width: 1, fields: [{ x: 0, y: 0 }] }, 0, 'no'),
+    stick2: transformShape({ id: shapeIdCounter++, height: 2, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }] }, 1, 'no'),
+    stick3: transformShape({ id: shapeIdCounter++, height: 3, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }] }, 1, 'no'),
+    stick4: transformShape({ id: shapeIdCounter++, height: 4, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 }] }, 1, 'no'),
+    stick5: transformShape({ id: shapeIdCounter++, height: 5, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 }, { x: 0, y: 4 }] }, 1, 'no'),
+    smallDiagonal: transformShape({ id: shapeIdCounter++, height: 2, width: 2, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }] }, 1, 'no'),
+    bigDiagonal: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 }] }, 1, 'no'),
+    stair: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 }, { x: 0, y: 1 }, { x: 1, y: 2 }] }, 3, 'no'),
+    lEdge: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 2 }, { x: 2, y: 2 }] }, 3, 'no'),
+    rectangle: transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 2 }] }, 1, 'no'),
+    bigSquare: transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 2, y: 0 }, { x: 2, y: 1 }, { x: 2, y: 2 }] }, 1, 'no'),
+    extremeSquare: transformShape({
+        id: shapeIdCounter++, height: 5, width: 5, fields: (() => {
+            let result: { x: number, y: number }[] = [];
+            for (let x = 0; x < 5; x++) {
+                for (let y = 0; y < 5; y++) {
+                    result.push(({ x, y }));
+                }
+            }
+            return result;
+        })()
+    }, 1, 'no'),
+}
+
 export function getShapes(): IShape[] {
     return [
-        // small T
-        ...transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 1 }] }, 1, 'vertical'),
-        // big T
-        ...transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 1 }, { x: 2, y: 1 }] }, 1, 'vertical'),
-        // small L
-        ...transformShape({ id: shapeIdCounter++, height: 2, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }] }, 3, 'no'),
-        // medium L
-        ...transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }] }, 3, 'horizontal'),
-        // S
-        ...transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 2 }] }, 1, 'horizontal'),
-        // quadrat
-        ...transformShape({ id: shapeIdCounter++, height: 2, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 0 }, { x: 1, y: 1 }] }, 0, 'no'),
-        // big L
-        ...transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 2 }, { x: 2, y: 2 }] }, 3, 'no'),
-        // C
-        ...transformShape({ id: shapeIdCounter++, height: 3, width: 2, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 1, y: 0 }, { x: 1, y: 2 },] }, 3, 'no'),
-        // sticks
-        ...transformShape({ id: shapeIdCounter++, height: 1, width: 1, fields: [{ x: 0, y: 0 }] }, 0, 'no'),
-        ...transformShape({ id: shapeIdCounter++, height: 2, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }] }, 1, 'no'),
-        ...transformShape({ id: shapeIdCounter++, height: 3, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }] }, 1, 'no'),
-        ...transformShape({ id: shapeIdCounter++, height: 4, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 }] }, 1, 'no'),
-        ...transformShape({ id: shapeIdCounter++, height: 5, width: 1, fields: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 }, { x: 0, y: 4 }] }, 1, 'no'),
-        // slash
-        ...transformShape({ id: shapeIdCounter++, height: 2, width: 2, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }] }, 1, 'no'),
-        ...transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 }] }, 1, 'no'),
-        // stair
-        // ...transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 2 }, { x: 0, y: 1 }, { x: 1, y: 2 }] }, 3, 'no'),
-        
-        // L edge
-        // ...transformShape({ id: shapeIdCounter++, height: 3, width: 3, fields: [{ x: 0, y: 0 }, { x: 0, y: 2 }, { x: 2, y: 2 }] }, 3, 'no'),
-        
+        ...Shapes.smallT,
+        ...Shapes.bigT,
+        ...Shapes.smallL,
+        ...Shapes.mediumL,
+        ...Shapes.sShape,
+        ...Shapes.square,
+        ...Shapes.bigL,
+        ...Shapes.cShape,
+        ...Shapes.stick1,
+        ...Shapes.stick2,
+        ...Shapes.stick3,
+        ...Shapes.stick4,
+        ...Shapes.stick5,
+        ...Shapes.smallDiagonal,
+        ...Shapes.bigDiagonal,
     ];
 }

@@ -45,10 +45,9 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe({
         next: params => {
           let mode: 'default' | 'baby' = 'default';
-          if (params['mode'] === 'baby_mode') {
-            mode = 'baby'
+          if (params['mode']) {
+            mode = params['mode']
           }
-
           this.menuBarService.set(
             (mode === 'default' ? undefined : mode),
             {

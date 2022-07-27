@@ -68,6 +68,11 @@ export class Game {
             removed: false,
         })));
 
+        this.setupShapeDimensionMap();
+    }
+
+    setupShapeDimensionMap() {
+        this.shapesByMaxDimension.clear();
         for (let shape of this.allShapes) {
             const dim = this.getShapeDimension(shape);
             if (!this.shapesByMaxDimension.has(dim)) {
@@ -100,6 +105,9 @@ export class Game {
     initGame() {
         migrateStore()
         this.loadStoredGame();
+        if(this.gameMode.init) {
+            this.gameMode.init(this);
+        }
     }
 
     loadStoredGame() {
@@ -168,12 +176,12 @@ export class Game {
     refillShapes() {
         // The following dimensions exist 2,3.5,4,5,5.5,6,6.5,8
 
-        let { maxDimension1, maxDimension2, maxDimension3 } = this.gameMode.getRefillShapeDimensionLimit(this);
+        let dimensionLimits = this.gameMode.getRefillShapeDimensionLimit(this);
 
         this.nextShapes = [
-            { shape: this.getRandomShape(maxDimension1), isDragging: false, index: 0 },
-            { shape: this.getRandomShape(maxDimension2), isDragging: false, index: 0 },
-            { shape: this.getRandomShape(maxDimension3), isDragging: false, index: 0 },
+            { shape: this.getRandomShape(dimensionLimits.maxDimension1, dimensionLimits.minDimension1), isDragging: false, index: 0 },
+            { shape: this.getRandomShape(dimensionLimits.maxDimension2, dimensionLimits.minDimension2), isDragging: false, index: 0 },
+            { shape: this.getRandomShape(dimensionLimits.maxDimension3, dimensionLimits.minDimension3), isDragging: false, index: 0 },
         ];
         shuffle(this.nextShapes);
         this.nextShapes.forEach((x, i) => x.index = i);
@@ -417,10 +425,13 @@ export class Game {
             (Math.abs(shape.width - shape.height) / 2);
     }
 
-    private getRandomShape(maxDimension: number): IShape {
+    private getRandomShape(maxDimension: number, minDimension?: number): IShape {
         let shapesByDimension = this.shapesByMaxDimension.get(maxDimension);
         if (!shapesByDimension) {
             throw new Error(`unknown shape dimension ${maxDimension}`);
+        }
+        if (minDimension) {
+            shapesByDimension = shapesByDimension.filter(x => this.getShapeDimension(x) >= minDimension)
         }
         return shapesByDimension[Math.floor(Math.random() * shapesByDimension.length)];
         // return this.allShapes[Math.floor(Math.random() * this.allShapes.length)];
