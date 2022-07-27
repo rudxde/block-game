@@ -10,6 +10,10 @@ export class InputHandler {
         private renderer: Renderer,
     ) { }
 
+    setNewGame(game: Game) {
+        this.game = game;
+    }
+
     setupListeners(canvas: HTMLCanvasElement) {
         window.addEventListener('resize', () => this.renderer.setCanvasSize());
         window.addEventListener('pointermove', (e) => {

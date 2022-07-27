@@ -60,6 +60,10 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
           this.game = new Game(gameModeFactory(mode));
           this.game.gameEnded$.subscribe(this.gameEnded$);
           this.game.initGame();
+          if(this.inputHandler && this.renderer) {
+            this.inputHandler.setNewGame(this.game);
+            this.renderer.setNewGame(this.game);
+          }
         }
       });
   }

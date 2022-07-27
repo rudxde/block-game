@@ -24,6 +24,9 @@ export class Renderer {
         this.ctx = ctx;
     }
 
+    setNewGame(game: Game) {
+        this.game = game;
+    }
 
     draw() {
         this.ctx.clearRect(0, 0, this.width, this.height);
