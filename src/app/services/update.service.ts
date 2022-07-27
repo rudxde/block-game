@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { SwUpdate } from '@angular/service-worker';
+import { SwUpdate, VersionDetectedEvent } from '@angular/service-worker';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoService } from '@ngneat/transloco';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom, throttleTime } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +15,12 @@ export class AppUpdateService {
     ) { }
 
     init() {
-        this.updates.versionUpdates.subscribe(event => {
+        this.updates.versionUpdates
+        .pipe(
+            filter(x => x.type === 'VERSION_DETECTED'),
+            throttleTime(1000),
+        )
+        .subscribe(event => {
             this.showAppUpdateAlert();
         });
     }
@@ -24,7 +29,7 @@ export class AppUpdateService {
         const action = await firstValueFrom(this.translocoService.selectTranslate('update_available.action'));
         const message = await firstValueFrom(this.translocoService.selectTranslate('update_available.message'));
 
-        const snackBarRef = this.snackBar.open(message, action, { duration: undefined });
+        const snackBarRef = this.snackBar.open(message, action, { duration: 20000 });
         snackBarRef.onAction().subscribe({
             next: () => this.doAppUpdate(),
         });
