@@ -27,5 +27,9 @@
             "de": "Deutsch",
             "en": "Englisch"
         }
+    },
+    "update_available": {
+        "message": "App Neuladen um Update zu laden",
+        "action": "Neuladen"
     }
 }

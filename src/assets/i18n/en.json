@@ -27,5 +27,9 @@
             "de": "german",
             "en": "englisch"
         }
+    },
+    "update_available": {
+        "message": "Reload App to apply update",
+        "action": "Reload"
     }
 }

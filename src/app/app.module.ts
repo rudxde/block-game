@@ -19,6 +19,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { SettingsComponent } from './components/settings/settings.component';
 import { MenuButtonComponent } from './components/menu-button/menu-button.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { AppUpdateService } from './services/update.service';
 
 @NgModule({
   declarations: [
@@ -43,16 +45,22 @@ import { MenuButtonComponent } from './components/menu-button/menu-button.compon
     MatSidenavModule,
     MatSelectModule,
     MatFormFieldModule,
+    MatSnackBarModule,
   ],
-  providers: [],
+  providers: [
+    AppUpdateService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor(translocoService: TranslocoService) {
+  constructor(
+    translocoService: TranslocoService,
+    appUpdateService: AppUpdateService,
+  ) {
     // const userLang = navigator.language || navigator.userLanguage;
     let language = navigator.language;
     let localStorageLanguage = localStorage.getItem('language');
-    if(localStorageLanguage) {
+    if (localStorageLanguage) {
       language = localStorageLanguage;
     }
     if (language.indexOf('-')) {
@@ -62,6 +70,7 @@ export class AppModule {
       return;
     }
     translocoService.setActiveLang(language);
-    document.querySelector('html')?.setAttribute('lang', translocoService.getActiveLang())
+    document.querySelector('html')?.setAttribute('lang', translocoService.getActiveLang());
+    appUpdateService.init();
   }
 }
