@@ -29,7 +29,7 @@
         }
     },
     "update_available": {
-        "message": "App Neuladen um Update zu laden",
+        "message": "App Neustarten um Update einzuspielen",
         "action": "Neuladen"
     }
 }
