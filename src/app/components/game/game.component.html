@@ -20,7 +20,7 @@
                 {{t('new_score', {score: (displayScore$ | async)})}}
             </span>
             <br>
-            <button (click)="newGameVerified()">{{t('new_game')}}</button>
+            <button mat-raised-button color="primary" (click)="newGameVerified()">{{t('new_game')}}</button>
         </div>
     </div>
 
@@ -28,8 +28,8 @@
         <div class="start-new-verification-cnt" *transloco="let t, read: 'game'">
             {{t('start-new-game-sure')}}
             <br/>
-            <button (click)="newGameVerified()">{{t('new_game')}}</button>
-            <button (click)="newGameAbort()">{{t('abort')}}</button>
+            <button mat-raised-button color="primary" (click)="newGameVerified()">{{t('new_game')}}</button>
+            <button mat-raised-button color="primary" (click)="newGameAbort()">{{t('abort')}}</button>
         </div>
     </div>
 </div>

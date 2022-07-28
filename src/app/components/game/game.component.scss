@@ -30,11 +30,6 @@
 
 
         button {
-            background-color: #00F;
-            color: #FFF;
-            border: 0;
-            border-radius: 16px;
-            padding: 16px;
             margin: 16px;
         }
     }
@@ -46,16 +41,6 @@
         grid-row: 1;
         grid-column: 1;
         display: grid;
-
-        .start-new {
-            justify-self: start;
-
-            button {
-                border: 0;
-                background: 0;
-                padding: 8px;
-            }
-        }
 
         .score-num {
             margin: 32px;
