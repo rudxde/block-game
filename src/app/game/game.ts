@@ -111,7 +111,7 @@ export class Game {
     }
 
     loadStoredGame() {
-        this.highScore = parseInt(localStorage.getItem(this.gameMode.name + '_highScore') ?? '0');
+        this.loadHighScore();
         const storedGameJson = localStorage.getItem(this.gameMode.name + '_store');
         if (!storedGameJson) {
             this.newGame();
@@ -165,13 +165,17 @@ export class Game {
                 // this.gameField[i][j].removed = true;
             }
         }
-        this.isHighScore = false;
         this.refillShapes();
         this.score = 0;
         this.gameEnded$.next(false);
+        this.loadHighScore();
+        this.storeGame();
+    }
+
+    private loadHighScore() {
+        this.isHighScore = false;
         this.highScore = parseInt(localStorage.getItem(this.gameMode.name + '_highScore') ?? '0');
         this.lastHighScore = this.highScore;
-        this.storeGame();
     }
 
     refillShapes() {
