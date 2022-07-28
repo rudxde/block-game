@@ -273,6 +273,8 @@ export class Renderer {
                     blockScaleSizeInterpolation: new HermiteInterpolation(0, 100, 1, blockScale),
                 }
             }
+            this.pickInterpolations.offsetXInterpolation.toValue = offsetX;
+            this.pickInterpolations.offsetYInterpolation.toValue = offsetY;
             offsetX = this.pickInterpolations.offsetXInterpolation.eval(draggingShape.pickAnimation);
             offsetY = this.pickInterpolations.offsetYInterpolation.eval(draggingShape.pickAnimation);
             shapeCellSize = this.pickInterpolations.shapeCellSizeInterpolation.eval(draggingShape.pickAnimation);
