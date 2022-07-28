@@ -31,5 +31,31 @@
     "update_available": {
         "message": "App Neustarten um Update einzuspielen",
         "action": "Neuladen"
+    },
+    "error": {
+        "unknown": {
+            "title": "Unbekannter Fehler",
+            "message": "Es ist ein unbekannter Fehler aufgetreten. Bitte versuche es später erneut."
+        },
+        "notFound": {
+            "title": "Fehler",
+            "message": "Die Seite konnte nicht gefunden werden."
+        },
+        "http_unknown": {
+            "title": "Verbindungs-Fehler",
+            "message": "Es ist ein Verbindungs-Fehler aufgetreten. Bitte versuche es später erneut."
+        },
+        "http_0": {
+            "title": "Verbindungs-Fehler",
+            "message": "Verbindung konnte nicht hergestellt werden. Bitte versuche es später erneut."
+        },
+        "http_404": {
+            "title": "Verbindungs-Fehler",
+            "message": "Die Angeforderte Ressource wurde nicht gefunden!"
+        },
+        "http_500": {
+            "title": "Verbindungs-Fehler",
+            "message": "Bei der Verbindung ist ein Serverfehler aufgetreten. Bitte versuche es später erneut."
+        }
     }
 }

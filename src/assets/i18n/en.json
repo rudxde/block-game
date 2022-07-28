@@ -31,5 +31,31 @@
     "update_available": {
         "message": "Reload App to apply update",
         "action": "Reload"
+    },
+    "error": {
+        "unknown": {
+            "title": "Unknown error",
+            "message": "An unknown error occurred!"
+        },
+        "notFound": {
+            "title": "Error",
+            "message": "The requested resource could not be found!"
+        },
+        "http_unknown": {
+            "title": "Connection Error",
+            "message": "A connection error occurred. Please try again later."
+        },
+        "http_0": {
+            "title": "Connection Error",
+            "message": "Connection could not be established. Please try again later."
+        },
+        "http_404": {
+            "title": "Connection Error",
+            "message": "The requested resource was not found!"
+        },
+        "http_500": {
+            "title": "Connection Error",
+            "message": "During the connection an error occurred on the server. Please try again later."
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -21,6 +21,8 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { MenuButtonComponent } from './components/menu-button/menu-button.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppUpdateService } from './services/update.service';
+import { ErrorComponent } from './components/error/error.component';
+import { GlobalErrorHandler } from './services/global-error.service';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,7 @@ import { AppUpdateService } from './services/update.service';
     GameComponent,
     SettingsComponent,
     MenuButtonComponent,
+    ErrorComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,6 +51,10 @@ import { AppUpdateService } from './services/update.service';
     MatSnackBarModule,
   ],
   providers: [
+    {
+      provide: ErrorHandler,
+      useClass: GlobalErrorHandler,
+    },
     AppUpdateService,
   ],
   bootstrap: [AppComponent]
