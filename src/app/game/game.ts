@@ -123,6 +123,10 @@ export class Game {
         this.score = storedGame.score;
         this.gameEnded$.next(storedGame.gameEnded);
         this.streakMultiplier = this.streakMultiplier;
+        this.nextShapes.forEach(x => {
+            x.isDragging = false;
+            x.pickAnimation = undefined;
+        });
     }
 
     tick() {
@@ -143,7 +147,7 @@ export class Game {
         }
         const draggingShape = this.getDraggingShape();
         if (draggingShape && draggingShape.pickAnimation) {
-            draggingShape.pickAnimation += 10;
+            draggingShape.pickAnimation += 5;
             if (draggingShape.pickAnimation >= 100) {
                 draggingShape.pickAnimation = undefined;
             }
