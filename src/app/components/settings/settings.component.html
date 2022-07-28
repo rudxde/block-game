@@ -1,5 +1,8 @@
 <div class="settings" *transloco="let t, read: 'settings'">
   <div class="language-select">
+    <h2>
+      {{t('select_lang')}}
+    </h2>
     <mat-form-field>
       <mat-label>{{t('select_lang')}}</mat-label>
       <mat-select [value]="activeLang" (selectionChange)="selectLang($event.value)">
@@ -9,6 +12,7 @@
       </mat-select>
     </mat-form-field>
   </div>
+  <div class="flex-spacer"></div>
   <div>
     <a href="/3rdpartylicenses.txt">{{t('3rdpartylicenses')}}</a>
   </div>

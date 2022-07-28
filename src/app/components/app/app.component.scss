@@ -1,5 +1,14 @@
 mat-drawer-container {
     height: 100vh;
+    
+    .drawer-content {
+        display: flex;
+        flex-direction: column;
+        .router-conent {
+            flex-grow: 1;
+        }
+    }
+    
 }
 
 .menu {

@@ -20,7 +20,7 @@
                 (clicked)="drawer.toggle()"></app-menu-button>
         </div>
     </mat-drawer>
-    <mat-drawer-content>
+    <mat-drawer-content class="drawer-content">
         <mat-toolbar class="toolbar" *transloco="let t, read: 'toolbar'">
             <button class="toggle-menu" mat-icon-button (click)="drawer.toggle()">
                 <mat-icon>menu</mat-icon>
@@ -38,6 +38,8 @@
                 </button>
             </span>
         </mat-toolbar>
-        <router-outlet></router-outlet>
+        <div class="router-conent">
+            <router-outlet></router-outlet>
+        </div>
     </mat-drawer-content>
 </mat-drawer-container>
