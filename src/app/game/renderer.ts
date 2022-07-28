@@ -2,6 +2,7 @@ import { cellSizeOfWidth, draggingOffsetY, fieldBaseColor, fieldDisabledColor, f
 import { Game } from './game';
 import { IShape } from './shapes';
 import { HermiteInterpolation } from 'interpolations';
+import { GameInstanceService } from '../services/game-instance.service';
 
 export class Renderer {
 
@@ -14,8 +15,7 @@ export class Renderer {
     constructor(
         private canvas: HTMLCanvasElement,
         private debugMode: boolean,
-        private game: Game,
-
+        private gameInstanceService: GameInstanceService,
     ) {
         let ctx = canvas.getContext('2d');
         if (!ctx) {
@@ -24,9 +24,6 @@ export class Renderer {
         this.ctx = ctx;
     }
 
-    setNewGame(game: Game) {
-        this.game = game;
-    }
 
     draw() {
         this.ctx.clearRect(0, 0, this.width, this.height);
@@ -113,8 +110,8 @@ export class Renderer {
         this.ctx.closePath();
 
 
-        for (let x = 0; x < this.game.gameField.length; x++) {
-            for (let y = 0; y < this.game.gameField[x].length; y++) {
+        for (let x = 0; x < this.gameInstanceService.game.gameField.length; x++) {
+            for (let y = 0; y < this.gameInstanceService.game.gameField[x].length; y++) {
                 this.drawField(x, y);
             }
         }
@@ -125,7 +122,7 @@ export class Renderer {
     private drawField(x: number, y: number) {
         let w = this.width;
 
-        let field = this.game.gameField[x][y];
+        let field = this.gameInstanceService.game.gameField[x][y];
         if (!field.placed && !field.marked && (!field.removed && field.animationProgress !== 100)) {
             return;
         }
@@ -175,7 +172,7 @@ export class Renderer {
             this.ctx.beginPath();
             this.ctx.strokeStyle = '#555';
             this.ctx.lineWidth = 0.5;
-            for (let i = 0; i < this.game.nextShapes.length; i++) {
+            for (let i = 0; i < this.gameInstanceService.game.nextShapes.length; i++) {
                 let x = i * (previewSize + 16) + 16;
                 let y = offsetY;
                 this.ctx.moveTo(x, y);
@@ -189,13 +186,13 @@ export class Renderer {
         }
 
         // let offsetY = w;
-        for (let i = 0; i < this.game.nextShapes.length; i++) {
-            let shape = this.game.nextShapes[i];
+        for (let i = 0; i < this.gameInstanceService.game.nextShapes.length; i++) {
+            let shape = this.gameInstanceService.game.nextShapes[i];
             if (!shape.shape || shape.isDragging) {
                 continue;
             }
             const { shapeCellSize, offsetX } = this.getPositionOfNextShape(shape.shape, i);
-            let shapeIsDisabled = (!this.game.shapeCanBePlaced(shape.shape)) || this.game.gameEnded$.value;
+            let shapeIsDisabled = (!this.gameInstanceService.game.shapeCanBePlaced(shape.shape)) || this.gameInstanceService.game.gameEnded$.value;
             this.drawShape(shape.shape, shapeCellSize, offsetX, offsetY, shapeIsDisabled);
         }
     }
@@ -258,7 +255,7 @@ export class Renderer {
     } | undefined;
 
     private drawDraggingShape() {
-        const draggingShape = this.game.getDraggingShape();
+        const draggingShape = this.gameInstanceService.game.getDraggingShape();
         if (!draggingShape || !draggingShape.shape) {
             return;
         }

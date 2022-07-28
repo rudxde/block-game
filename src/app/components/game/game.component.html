@@ -13,10 +13,10 @@
         <div class="game-end-cnt" *transloco="let t, read: 'game'">
             {{t('game_over')}}
             <br>
-            <span *ngIf="game?.isHighScore">
+            <span *ngIf="gameInstanceService.game.isHighScore">
                 {{t('new_high_score', {score: (displayScore$ | async)})}}
             </span>
-            <span *ngIf="!game?.isHighScore">
+            <span *ngIf="!gameInstanceService.game.isHighScore">
                 {{t('new_score', {score: (displayScore$ | async)})}}
             </span>
             <br>

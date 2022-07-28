@@ -5,6 +5,7 @@ import { Game } from 'src/app/game/game';
 import { InputHandler } from 'src/app/game/input-handler';
 import { gameModeFactory } from 'src/app/game/modes/mode-factory';
 import { Renderer } from 'src/app/game/renderer';
+import { GameInstanceService } from 'src/app/services/game-instance.service';
 import { MenuBarService } from 'src/app/services/menu-bar.service';
 
 
@@ -18,7 +19,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   debugMode = false;
 
   private renderer: Renderer | undefined;
-  game: Game | undefined;
+  // game: Game | undefined;
   private inputHandler: InputHandler | undefined;
 
 
@@ -34,6 +35,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     private menuBarService: MenuBarService,
+    public gameInstanceService: GameInstanceService,
   ) { }
 
   ngOnInit(): void {
@@ -57,13 +59,10 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           );
 
-          this.game = new Game(gameModeFactory(mode));
-          this.game.gameEnded$.subscribe(this.gameEnded$);
-          this.game.initGame();
-          if(this.inputHandler && this.renderer) {
-            this.inputHandler.setNewGame(this.game);
-            this.renderer.setNewGame(this.game);
-          }
+          let game = new Game(gameModeFactory(mode));
+          game.gameEnded$.subscribe(this.gameEnded$);
+          game.initGame();
+          this.gameInstanceService.setGame(game);
         }
       });
   }
@@ -76,15 +75,12 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.canvas) {
       throw new Error('canvas not found!');
     }
-    if (!this.game) {
-      throw new Error('Game is not initialized');
-    }
     this.renderer = new Renderer(
       this.canvas.nativeElement,
       this.debugMode,
-      this.game,
+      this.gameInstanceService,
     );
-    this.inputHandler = new InputHandler(this.game, this.renderer);
+    this.inputHandler = new InputHandler(this.gameInstanceService, this.renderer);
     this.inputHandler.setupListeners(this.canvas.nativeElement);
     this.renderer.setCanvasSize();
     this.renderer.draw();
@@ -93,16 +89,13 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
   displayCounterUpdateCoolDown = 0;
   tick() {
-    if (!this.game) {
-      throw new Error('Game not initialized.');
-    }
     if (this.displayCounterUpdateCoolDown === 0) {
-      this.updateDisplayCounter(this.game.score, this.displayScore$);
-      this.updateDisplayCounter(this.game.highScore, this.displayHighScore$);
+      this.updateDisplayCounter(this.gameInstanceService.game.score, this.displayScore$);
+      this.updateDisplayCounter(this.gameInstanceService.game.highScore, this.displayHighScore$);
       this.displayCounterUpdateCoolDown = 5;
     }
     this.displayCounterUpdateCoolDown--;
-    this.game.tick();
+    this.gameInstanceService.game.tick();
   }
 
   updateDisplayCounter(goal: number, display$: BehaviorSubject<number>): void {
@@ -123,10 +116,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   newGameVerified() {
-    if (!this.game) {
-      throw new Error(`Game was not initialized!`);
-    }
-    this.game.newGame();
+    this.gameInstanceService.game.newGame();
     this.startNewVerification$.next(false);
   }
 
