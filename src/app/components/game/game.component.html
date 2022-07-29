@@ -9,7 +9,7 @@
     </div>
     <canvas #canvas class="canvas"></canvas>
 
-    <div class="game-end overlay" *ngIf="gameEnded$ | async">
+    <div class="game-end overlay" *ngIf="(gameEnded$ | async) && !(startNewVerification$ | async)">
         <div class="game-end-cnt" *transloco="let t, read: 'game'">
             {{t('game_over')}}
             <br>
