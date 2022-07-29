@@ -1,5 +1,5 @@
+import { filter, fromEvent, Observable, takeUntil } from 'rxjs';
 import { GameInstanceService } from '../services/game-instance.service';
-import { Game } from './game';
 import { Renderer } from './renderer';
 
 export class InputHandler {
@@ -9,37 +9,60 @@ export class InputHandler {
     constructor(
         private gameInstanceService: GameInstanceService,
         private renderer: Renderer,
+        private destroy$: Observable<void>,
     ) { }
 
     setupListeners(canvas: HTMLCanvasElement) {
-        window.addEventListener('resize', () => this.renderer.setCanvasSize());
-        window.addEventListener('pointermove', (e) => {
-            e.preventDefault();
-        });
-        canvas.addEventListener('pointerdown', (e) => {
-            e.preventDefault();
-            this.pointerDown(e.offsetX, e.offsetY);
-        });
-        canvas.addEventListener('pointerup', (e) => {
-            e.preventDefault();
-            this.pointerUp(e.offsetX, e.offsetY);
-        });
-        canvas.addEventListener('pointermove', (e) => {
-            e.preventDefault();
-            this.pointerMove(e.offsetX, e.offsetY);
-        });
-        canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            // this.pointerDown(e.touches[0].clientX, e.touches[0].clientY + canvas.top);
-        });
-        canvas.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            // this.pointerUp(e.clientX, e.offsetY);
-        });
-        canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            // this.pointerMove(e.clientX, e.offsetY);
-        });
+        fromEvent(window, 'resize')
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => this.renderer.setCanvasSize());
+        fromEvent(window, 'pointermove')
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((e) => {
+                e.preventDefault();
+            });
+        fromEvent(canvas, 'pointerdown')
+            .pipe(
+                filter<Event, PointerEvent>((e): e is PointerEvent => e instanceof PointerEvent),
+                takeUntil(this.destroy$),
+            )
+            .subscribe((e) => {
+                e.preventDefault();
+                this.pointerDown(e.offsetX, e.offsetY);
+            });
+        fromEvent(canvas, 'pointerup')
+            .pipe(
+                filter<Event, PointerEvent>((e): e is PointerEvent => e instanceof PointerEvent),
+                takeUntil(this.destroy$),
+            )
+            .subscribe((e) => {
+                e.preventDefault();
+                this.pointerUp(e.offsetX, e.offsetY);
+            });
+        fromEvent(canvas, 'pointermove')
+            .pipe(
+                filter<Event, PointerEvent>((e): e is PointerEvent => e instanceof PointerEvent),
+                takeUntil(this.destroy$),
+            )
+            .subscribe((e) => {
+                e.preventDefault();
+                this.pointerMove(e.offsetX, e.offsetY);
+            });
+        fromEvent(canvas, 'touchstart')
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((e) => {
+                e.preventDefault();
+            });
+        fromEvent(canvas, 'touchend')
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((e) => {
+                e.preventDefault();
+            });
+        fromEvent(canvas, 'touchmove')
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((e) => {
+                e.preventDefault();
+            });
     }
 
     pointerMove(x: number, y: number) {

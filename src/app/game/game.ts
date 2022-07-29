@@ -164,9 +164,7 @@ export class Game {
                 this.gameField[i][j].marked = false;
                 this.gameField[i][j].placed = false;
                 this.gameField[i][j].animationProgress = undefined;
-                // this.gameField[i][j].animationProgress = Math.floor(Math.random() * 100);
                 this.gameField[i][j].removed = false;
-                // this.gameField[i][j].removed = true;
             }
         }
         this.refillShapes();

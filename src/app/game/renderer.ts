@@ -1,8 +1,8 @@
 import { cellSizeOfWidth, draggingOffsetY, fieldBaseColor, fieldDisabledColor, fieldHighlightColor, fieldInnerBorderColor, fieldLineColor, fieldMarkedColor, fieldOuterBorderColor, markedFieldOuterBorderColor, sectorLineColor } from './constants';
-import { Game } from './game';
 import { IShape } from './shapes';
 import { HermiteInterpolation } from 'interpolations';
 import { GameInstanceService } from '../services/game-instance.service';
+import { animationFrameScheduler, interval, Observable, takeUntil } from 'rxjs';
 
 export class Renderer {
 
@@ -16,6 +16,7 @@ export class Renderer {
         private canvas: HTMLCanvasElement,
         private debugMode: boolean,
         private gameInstanceService: GameInstanceService,
+        private destroy$: Observable<void>,
     ) {
         let ctx = canvas.getContext('2d');
         if (!ctx) {
@@ -24,13 +25,18 @@ export class Renderer {
         this.ctx = ctx;
     }
 
+    startDrawing() {
+        interval(0, animationFrameScheduler)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => this.draw());
+    }
 
-    draw() {
+
+    private draw() {
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.drawGameField();
         this.drawNextShapes();
         this.drawDraggingShape();
-        requestAnimationFrame(() => this.draw());
     }
 
 

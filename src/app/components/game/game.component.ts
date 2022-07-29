@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, interval, Subject, takeUntil } from 'rxjs';
 import { Game } from 'src/app/game/game';
 import { InputHandler } from 'src/app/game/input-handler';
 import { gameModeFactory } from 'src/app/game/modes/mode-factory';
@@ -79,12 +79,18 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
       this.canvas.nativeElement,
       this.debugMode,
       this.gameInstanceService,
+      this.destroy$,
     );
-    this.inputHandler = new InputHandler(this.gameInstanceService, this.renderer);
+    this.inputHandler = new InputHandler(this.gameInstanceService, this.renderer, this.destroy$);
     this.inputHandler.setupListeners(this.canvas.nativeElement);
     this.renderer.setCanvasSize();
-    this.renderer.draw();
-    setInterval(() => this.tick(), 10);
+    this.renderer.startDrawing();
+
+    interval(10)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: this.tick.bind(this)
+      })
   }
 
   displayCounterUpdateCoolDown = 0;
