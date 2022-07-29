@@ -1,10 +1,9 @@
 import { BehaviorSubject } from 'rxjs';
 import { shuffle } from '../utils/shuffle-array';
-import { migrateStore } from './migrate-store';
 import { IGameMode } from './modes';
 import { getShapes, IShape } from './shapes';
 
-interface IField {
+export interface IField {
     x: number;
     y: number;
     placed: boolean;
@@ -14,7 +13,7 @@ interface IField {
     removed: boolean;
 }
 
-interface IStoredGame {
+export interface IStoredGame {
     score: number;
     gameField: IField[][];
     nextShapes: IDraggingShape[];
@@ -32,43 +31,32 @@ interface IDraggingShape {
 
 export class Game {
 
-    height = 0;
-    gameField: IField[][] = [];
-
-    nextShapes: IDraggingShape[] = [];
-
     allShapes: IShape[] = getShapes();
     shapesByMaxDimension: Map<number, IShape[]> = new Map();
-
     debugMode = false;
-
-
-    score = 0;
-
-
-    streakMultiplier = 1;
 
     isHighScore = false;
     gameEnded$ = new BehaviorSubject<boolean>(false);
-
-
 
     highScore = 0;
     lastHighScore = 0;
 
     constructor(
         private gameMode: IGameMode,
+        public gameField: IField[][],
+        public nextShapes: IDraggingShape[] = [],
+        public score = 0,
+        public streakMultiplier = 1,
     ) {
-        this.gameField = new Array(9).fill(undefined).map((_, x) => new Array(9).fill(undefined).map((_, y) => (<IField>{
-            x,
-            y,
-            placed: false,
-            highlighted: false,
-            marked: false,
-            removed: false,
-        })));
-
         this.setupShapeDimensionMap();
+        this.loadHighScore();
+        this.nextShapes.forEach(x => {
+            x.isDragging = false;
+            x.pickAnimation = undefined;
+        });
+        if(this.nextShapes.length === 0) {
+            this.refillShapes();
+        }
     }
 
     setupShapeDimensionMap() {
@@ -103,30 +91,9 @@ export class Game {
     }
 
     initGame() {
-        migrateStore()
         if (this.gameMode.init) {
             this.gameMode.init(this);
         }
-        this.loadStoredGame();
-    }
-
-    loadStoredGame() {
-        this.loadHighScore();
-        const storedGameJson = localStorage.getItem(this.gameMode.name + '_store');
-        if (!storedGameJson) {
-            this.newGame();
-            return;
-        }
-        let storedGame: IStoredGame = JSON.parse(storedGameJson);
-        this.gameField = storedGame.gameField;
-        this.nextShapes = storedGame.nextShapes;
-        this.score = storedGame.score;
-        this.gameEnded$.next(storedGame.gameEnded);
-        this.streakMultiplier = this.streakMultiplier;
-        this.nextShapes.forEach(x => {
-            x.isDragging = false;
-            x.pickAnimation = undefined;
-        });
     }
 
     tick() {
@@ -157,23 +124,6 @@ export class Game {
         }
     }
 
-    newGame() {
-        for (let i = 0; i < 9; i++) {
-            for (let j = 0; j < 9; j++) {
-                this.gameField[i][j].highlighted = false;
-                this.gameField[i][j].marked = false;
-                this.gameField[i][j].placed = false;
-                this.gameField[i][j].animationProgress = undefined;
-                this.gameField[i][j].removed = false;
-            }
-        }
-        this.refillShapes();
-        this.score = 0;
-        this.gameEnded$.next(false);
-        this.loadHighScore();
-        this.storeGame();
-    }
-
     private loadHighScore() {
         this.isHighScore = false;
         this.highScore = parseInt(localStorage.getItem(this.gameMode.name + '_highScore') ?? '0');
@@ -194,7 +144,6 @@ export class Game {
         this.nextShapes.forEach((x, i) => x.index = i);
     }
 
-
     endGame() {
         this.isHighScore = this.score > this.lastHighScore;
         if (this.isHighScore) {
@@ -202,7 +151,6 @@ export class Game {
         }
         this.gameEnded$.next(true);
     }
-
 
     resetMarkings() {
         this.gameField.forEach(line => line.forEach(field => {

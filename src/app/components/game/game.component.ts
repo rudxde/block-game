@@ -39,32 +39,34 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-
+    this.gameInstanceService.gameEnded$.subscribe(this.gameEnded$);
     this.activatedRoute.params
       .pipe(
         takeUntil(this.destroy$),
       )
       .subscribe({
-        next: params => {
-          let mode: 'default' | 'baby' = 'default';
-          if (params['mode']) {
-            mode = params['mode']
-          }
-          this.menuBarService.set(
-            (mode === 'default' ? undefined : mode),
-            {
-              icon: 'replay',
-              title: 'new Game',
-              click: () => this.newGame(),
-            }
-          );
-
-          let game = new Game(gameModeFactory(mode));
-          game.gameEnded$.subscribe(this.gameEnded$);
-          game.initGame();
-          this.gameInstanceService.setGame(game);
+        next: () => {
+          let mode: string = this.getMode();
+          this.gameInstanceService.loadGame(mode);
         }
       });
+  }
+
+  private getMode() {
+    const params = this.activatedRoute.snapshot.params;
+    let mode: string = 'default';
+    if (params['mode']) {
+      mode = params['mode'];
+    }
+    this.menuBarService.set(
+      (mode === 'default' ? undefined : mode),
+      {
+        icon: 'replay',
+        title: 'new Game',
+        click: () => this.askVerificationForNewGame(),
+      }
+    );
+    return mode;
   }
 
   ngOnDestroy(): void {
@@ -117,12 +119,12 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  newGame() {
+  askVerificationForNewGame() {
     this.startNewVerification$.next(true);
   }
 
-  newGameVerified() {
-    this.gameInstanceService.game.newGame();
+  newGame() {
+    this.gameInstanceService.newGame(this.getMode());
     this.startNewVerification$.next(false);
   }
 
