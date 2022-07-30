@@ -55,7 +55,7 @@ export class Game {
             x.pickAnimation = undefined;
         });
         if(this.gameMode.init) {
-            this.gameMode.init();
+            this.gameMode.init(this);
         }
         if(this.nextShapes.length === 0) {
             this.refillShapes();
