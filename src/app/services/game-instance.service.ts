@@ -34,7 +34,6 @@ export class GameInstanceService {
         this.gameInstance = game;
         this.subscribeToGameEnd();
         game.gameEnded$.next(storedGame.gameEnded);
-        game.initGame();
         return game;
     }
 
@@ -54,7 +53,6 @@ export class GameInstanceService {
         this.gameInstance = game;
         this.subscribeToGameEnd();
         game.gameEnded$.next(false);
-        game.initGame();
         game.storeGame();
         return game;
     }

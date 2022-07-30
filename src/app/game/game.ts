@@ -54,6 +54,9 @@ export class Game {
             x.isDragging = false;
             x.pickAnimation = undefined;
         });
+        if(this.gameMode.init) {
+            this.gameMode.init();
+        }
         if(this.nextShapes.length === 0) {
             this.refillShapes();
         }
@@ -88,12 +91,6 @@ export class Game {
             streakMultiplier: this.streakMultiplier,
         };
         localStorage.setItem(this.gameMode.name + '_store', JSON.stringify(game));
-    }
-
-    initGame() {
-        if (this.gameMode.init) {
-            this.gameMode.init(this);
-        }
     }
 
     tick() {
