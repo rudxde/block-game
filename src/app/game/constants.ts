@@ -7,5 +7,6 @@ export const fieldInnerBorderColor = '#5AF';
 export const fieldOuterBorderColor = '#000';
 export const markedFieldOuterBorderColor = '#555';
 export const fieldDisabledColor = '#555';
+export const fieldWarningColor = '#a95792';
 export const sectorLineColor = '#000';
 export const fieldLineColor = '#555';

@@ -223,7 +223,7 @@ export class Game {
         return dragging;
     }
 
-    shapeCanBePlaced(shape: IShape): boolean {
+    shapeCanBePlaced(shape: IShape, includeMarked: boolean = false): boolean {
         for (let i = 0; i < 9; i++) {
             if (9 - shape.width < i) {
                 continue;
@@ -232,7 +232,7 @@ export class Game {
                 if (9 - shape.height < j) {
                     continue;
                 }
-                if (this.canDropShape(shape, { x: i, y: j })) {
+                if (this.canDropShape(shape, { x: i, y: j }, includeMarked)) {
                     return true;
                 }
             }
@@ -389,14 +389,17 @@ export class Game {
         // return this.allShapes[Math.floor(Math.random() * this.allShapes.length)];
     }
 
-    private canDropShape(shape: IShape, position: { x: number; y: number; }): boolean {
+    private canDropShape(shape: IShape, position: { x: number; y: number; }, includeMarked: boolean = false): boolean {
         for (let field of shape.fields) {
             const x = field.x + position.x;
             const y = field.y + position.y;
             if (x >= 9 || y >= 9) {
                 return false;
             }
-            if (this.gameField[x][y].placed) {
+            if (
+                this.gameField[x][y].placed
+                || (includeMarked && this.gameField[x][y].marked)
+            ) {
                 return false;
             }
         }

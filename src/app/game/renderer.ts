@@ -1,4 +1,4 @@
-import { cellSizeOfWidth, draggingOffsetY, fieldBaseColor, fieldDisabledColor, fieldHighlightColor, fieldInnerBorderColor, fieldLineColor, fieldMarkedColor, fieldOuterBorderColor, markedFieldOuterBorderColor, sectorLineColor } from './constants';
+import { cellSizeOfWidth, draggingOffsetY, fieldBaseColor, fieldDisabledColor, fieldHighlightColor, fieldInnerBorderColor, fieldLineColor, fieldMarkedColor, fieldOuterBorderColor, fieldWarningColor, markedFieldOuterBorderColor, sectorLineColor } from './constants';
 import { IShape } from './shapes';
 import { HermiteInterpolation } from 'interpolations';
 import { GameInstanceService } from '../services/game-instance.service';
@@ -199,7 +199,8 @@ export class Renderer {
             }
             const { shapeCellSize, offsetX } = this.getPositionOfNextShape(shape.shape, i);
             let shapeIsDisabled = (!this.gameInstanceService.game.shapeCanBePlaced(shape.shape)) || this.gameInstanceService.game.gameEnded$.value;
-            this.drawShape(shape.shape, shapeCellSize, offsetX, offsetY, shapeIsDisabled);
+            let shapeHasWarning = !shapeIsDisabled && !this.gameInstanceService.game.shapeCanBePlaced(shape.shape, true);
+            this.drawShape(shape.shape, shapeCellSize, offsetX, offsetY, shapeIsDisabled, undefined, shapeHasWarning);
         }
     }
 
@@ -224,7 +225,15 @@ export class Renderer {
         }
     }
 
-    private drawShape(shape: IShape, shapeCellSize: number, offsetX: number, offsetY: number, disabled: boolean = false, blockScale = 1) {
+    private drawShape(
+        shape: IShape,
+        shapeCellSize: number,
+        offsetX: number,
+        offsetY: number,
+        disabled: boolean = false,
+        blockScale: number = 1,
+        shapeHasWarning: boolean = false
+    ): void {
         if (this.debugMode) {
             this.ctx.fillStyle = '#000';
             this.ctx.fillText(`id: ${shape.id}`, offsetX, offsetY);
@@ -235,6 +244,8 @@ export class Renderer {
             let scaledShapeCellSize = shapeCellSize * blockScale;
             if (disabled) {
                 this.ctx.fillStyle = fieldDisabledColor;
+            } else if (shapeHasWarning) {
+                this.ctx.fillStyle = fieldWarningColor;
             } else {
                 this.ctx.fillStyle = fieldBaseColor;
             }
