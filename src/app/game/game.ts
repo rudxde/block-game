@@ -398,7 +398,7 @@ export class Game {
             }
             if (
                 this.gameField[x][y].placed
-                || (includeMarked && this.gameField[x][y].marked)
+                || (includeMarked && this.gameField[x][y].marked && !this.gameField[x][y].highlighted)
             ) {
                 return false;
             }
