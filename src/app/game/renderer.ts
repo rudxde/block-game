@@ -172,7 +172,6 @@ export class Renderer {
     private drawNextShapes() {
         let w = this.width;
         let previewSize = (w / 3) - 16;
-        let offsetY = w + 16;
 
         if (this.debugMode) {
             this.ctx.beginPath();
@@ -180,7 +179,7 @@ export class Renderer {
             this.ctx.lineWidth = 0.5;
             for (let i = 0; i < this.gameInstanceService.game.nextShapes.length; i++) {
                 let x = i * (previewSize + 16) + 16;
-                let y = offsetY;
+                let y = w + 16;
                 this.ctx.moveTo(x, y);
                 this.ctx.lineTo(x + previewSize, y);
                 this.ctx.lineTo(x + previewSize, y + previewSize);
@@ -191,13 +190,12 @@ export class Renderer {
             this.ctx.closePath();
         }
 
-        // let offsetY = w;
         for (let i = 0; i < this.gameInstanceService.game.nextShapes.length; i++) {
             let shape = this.gameInstanceService.game.nextShapes[i];
             if (!shape.shape || shape.isDragging) {
                 continue;
             }
-            const { shapeCellSize, offsetX } = this.getPositionOfNextShape(shape.shape, i);
+            const { shapeCellSize, offsetX, offsetY } = this.getPositionOfNextShape(shape.shape, i);
             let shapeIsDisabled = (!this.gameInstanceService.game.shapeCanBePlaced(shape.shape)) || this.gameInstanceService.game.gameEnded$.value;
             let shapeHasWarning = !shapeIsDisabled && !this.gameInstanceService.game.shapeCanBePlaced(shape.shape, true);
             this.drawShape(shape.shape, shapeCellSize, offsetX, offsetY, shapeIsDisabled, undefined, shapeHasWarning);
@@ -207,7 +205,6 @@ export class Renderer {
     private getPositionOfNextShape(shape: IShape, index: number): { shapeCellSize: number, offsetX: number, offsetY: number } {
         let w = this.width;
         let previewSize = (w / 3) - 16;
-        let offsetY = w + 16;
         const largestDimension = shape.height > shape.width ? shape.height : shape.width;
         // let offsetX = 0;
         let shapeCellSize = (previewSize / largestDimension);
@@ -217,6 +214,7 @@ export class Renderer {
         if (largestDimension === 1) {
             shapeCellSize *= 0.33;
         }
+        let offsetY = w + 16 + ((previewSize - (shapeCellSize * shape.height)) / 2);
         let offsetX = index * (previewSize + 16) + ((previewSize - (shapeCellSize * shape.width)) / 2) + 16;
         return {
             shapeCellSize,
