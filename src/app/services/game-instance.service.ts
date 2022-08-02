@@ -14,7 +14,9 @@ export class GameInstanceService {
     public readonly gameEnded$ = new BehaviorSubject<boolean>(false);
     public readonly nextGameStarted$ = new Subject<void>();
 
-    constructor() { }
+    constructor() { 
+        (window as any)['game'] = () => this.game;
+    }
 
     loadGame(mode: string): Game {
         migrateStore()
