@@ -1,4 +1,17 @@
-import { cellSizeOfWidth, draggingOffsetY, fieldBaseColor, fieldDisabledColor, fieldHighlightColor, fieldInnerBorderColor, fieldLineColor, fieldMarkedColor, fieldOuterBorderColor, fieldWarningColor, markedFieldOuterBorderColor, sectorLineColor } from './constants';
+import {
+    cellSizeOfWidth,
+    draggingOffsetY,
+    fieldBaseColor,
+    fieldDisabledColor,
+    fieldHighlightColor,
+    fieldInnerBorderColor,
+    fieldLineColor,
+    fieldMarkedColor,
+    fieldOuterBorderColor,
+    fieldWarningColor,
+    markedFieldOuterBorderColor,
+    sectorLineColor
+} from './constants';
 import { IShape } from './shapes';
 import { HermiteInterpolation } from 'interpolations';
 import { GameInstanceService } from '../services/game-instance.service';
@@ -206,7 +219,6 @@ export class Renderer {
         let w = this.width;
         let previewSize = (w / 3) - 16;
         const largestDimension = shape.height > shape.width ? shape.height : shape.width;
-        // let offsetX = 0;
         let shapeCellSize = (previewSize / largestDimension);
         if (largestDimension === 2) {
             shapeCellSize *= 0.66;

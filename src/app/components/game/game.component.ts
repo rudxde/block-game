@@ -1,9 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, interval, Subject, takeUntil } from 'rxjs';
-import { Game } from 'src/app/game/game';
 import { InputHandler } from 'src/app/game/input-handler';
-import { gameModeFactory } from 'src/app/game/modes/mode-factory';
 import { Renderer } from 'src/app/game/renderer';
 import { GameInstanceService } from 'src/app/services/game-instance.service';
 import { MenuBarService } from 'src/app/services/menu-bar.service';
@@ -19,7 +17,6 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   debugMode = false;
 
   private renderer: Renderer | undefined;
-  // game: Game | undefined;
   private inputHandler: InputHandler | undefined;
 
 

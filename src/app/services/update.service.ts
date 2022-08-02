@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SwUpdate, VersionDetectedEvent } from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslocoService } from '@ngneat/transloco';
 import { filter, firstValueFrom, throttleTime } from 'rxjs';

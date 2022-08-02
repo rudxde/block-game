@@ -33,7 +33,6 @@ export class Game {
 
     allShapes: IShape[] = getShapes();
     shapesByMaxDimension: Map<number, IShape[]> = new Map();
-    debugMode = false;
 
     isHighScore = false;
     gameEnded$ = new BehaviorSubject<boolean>(false);
@@ -75,7 +74,6 @@ export class Game {
             const dim = this.getShapeDimension(shape);
             for (let k of availableDimensions) {
                 if (k >= dim) {
-                    // continue;
                     this.shapesByMaxDimension.get(k)!.push(shape);
                 }
             }
@@ -180,7 +178,6 @@ export class Game {
         if (!draggingShape.shape) {
             throw new Error('dragging shape has no shape');
         }
-        // const position = this.getDraggingCellPosition(dragging.shape, dragPosition);
         if (!this.positionIsOnBoard(position)) {
             return;
         }
@@ -386,7 +383,6 @@ export class Game {
             shapesByDimension = shapesByDimension.filter(x => this.getShapeDimension(x) >= minDimension)
         }
         return shapesByDimension[Math.floor(Math.random() * shapesByDimension.length)];
-        // return this.allShapes[Math.floor(Math.random() * this.allShapes.length)];
     }
 
     private canDropShape(shape: IShape, position: { x: number; y: number; }, includeMarked: boolean = false): boolean {

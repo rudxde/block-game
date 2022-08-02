@@ -64,7 +64,6 @@ export class AppModule {
     translocoService: TranslocoService,
     appUpdateService: AppUpdateService,
   ) {
-    // const userLang = navigator.language || navigator.userLanguage;
     let language = navigator.language;
     let localStorageLanguage = localStorage.getItem('language');
     if (localStorageLanguage) {
