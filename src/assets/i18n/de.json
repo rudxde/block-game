@@ -26,11 +26,19 @@
         "languages": {
             "de": "Deutsch",
             "en": "Englisch"
-        }
+        },
+        "update": "Update Einstellungen",
+        "update_enabled": "Automatische Update Überprüfung ist aktiviert",
+        "update_disabled": "Automatische Update Überprüfung ist deaktiviert",
+        "update_now": "Jetzt Update suchen"
     },
     "update_available": {
         "message": "App Neustarten um Update einzuspielen",
         "action": "Neuladen"
+    },
+    "no_update_available": {
+        "message": "Kein Update verfügbar",
+        "action": "Ok"
     },
     "error": {
         "unknown": {

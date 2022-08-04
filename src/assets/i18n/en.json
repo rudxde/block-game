@@ -26,11 +26,19 @@
         "languages": {
             "de": "german",
             "en": "englisch"
-        }
+        },
+        "update": "Update Settings",
+        "update_enabled": "auto update checking is enabled",
+        "update_disabled": "auto update checking is disabled",
+        "update_now": "Update now"
     },
     "update_available": {
         "message": "Reload App to apply update",
         "action": "Reload"
+    },
+    "no_update_available": {
+        "message": "No update available",
+        "action": "ok"
     },
     "error": {
         "unknown": {

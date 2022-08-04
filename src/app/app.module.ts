@@ -23,6 +23,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppUpdateService } from './services/update.service';
 import { ErrorComponent } from './components/error/error.component';
 import { GlobalErrorHandler } from './services/global-error.service';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,7 @@ import { GlobalErrorHandler } from './services/global-error.service';
     AppRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
-      registrationStrategy: 'registerImmediately'
+      registrationStrategy: 'registerImmediately',
     }),
     HttpClientModule,
     TranslocoRootModule,
@@ -49,6 +50,7 @@ import { GlobalErrorHandler } from './services/global-error.service';
     MatSelectModule,
     MatFormFieldModule,
     MatSnackBarModule,
+    MatSlideToggleModule,
   ],
   providers: [
     {

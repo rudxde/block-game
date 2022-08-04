@@ -12,3 +12,14 @@
 mat-form-field {
     width: 100%;
 }
+
+
+.settings-section+.settings-section {
+    margin-top: 32px;
+}
+
+.update {
+    .update-now {
+        margin-top: 16px;
+    }
+}

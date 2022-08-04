@@ -1,5 +1,5 @@
 <div class="settings" *transloco="let t, read: 'settings'">
-  <div class="language-select">
+  <div class="language-select settings-section">
     <h2>
       {{t('select_lang')}}
     </h2>
@@ -11,6 +11,18 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+  </div>
+  <div class="update settings-section">
+    <h2>
+      {{t('update')}}
+    </h2>
+    <mat-slide-toggle (change)="setAutoUpdate($event.checked)" [checked]="autoUpdateEnabled">
+      {{ autoUpdateEnabled ? t('update_enabled') : t('update_disabled') }}
+    </mat-slide-toggle>
+    <br />
+    <button mat-raised-button (click)="checkForUpdates()" class="update-now">
+      {{t('update_now')}}
+    </button>
   </div>
   <div class="flex-spacer"></div>
   <div>
