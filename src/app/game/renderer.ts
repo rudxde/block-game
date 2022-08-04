@@ -284,6 +284,7 @@ export class Renderer {
     private drawDraggingShape() {
         const draggingShape = this.gameInstanceService.game.getDraggingShape();
         if (!draggingShape || !draggingShape.shape) {
+            this.pickInterpolations = undefined;
             return;
         }
         let offsetX = this.dragPosition.x - (draggingShape.shape.width * cellSizeOfWidth * this.width / 2);
