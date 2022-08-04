@@ -18,6 +18,9 @@ export class AppUpdateService {
     ) { }
 
     init() {
+        if (!this.updates.isEnabled) {
+            return;
+        }
         if (this.autoUpdateEnabled()) {
             this.checkForUpdates();
         }
