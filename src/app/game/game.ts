@@ -7,7 +7,9 @@ export interface IField {
     x: number;
     y: number;
     placed: boolean;
+    // highlight if the row/col/section can be eliminated
     highlighted: boolean;
+    // marking where dragging shape would be dropped
     marked: boolean;
     animationProgress?: number;
     removed: boolean;
@@ -53,10 +55,10 @@ export class Game {
             x.isDragging = false;
             x.pickAnimation = undefined;
         });
-        if(this.gameMode.init) {
+        if (this.gameMode.init) {
             this.gameMode.init(this);
         }
-        if(this.nextShapes.length === 0) {
+        if (this.nextShapes.length === 0) {
             this.refillShapes();
         }
     }
@@ -393,7 +395,8 @@ export class Game {
                 return false;
             }
             if (
-                this.gameField[x][y].placed
+                !(includeMarked && this.gameField[x][y].highlighted)
+                && (this.gameField[x][y].placed)
                 || (includeMarked && this.gameField[x][y].marked && !this.gameField[x][y].highlighted)
             ) {
                 return false;
