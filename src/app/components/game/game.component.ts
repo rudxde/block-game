@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, interval, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, interval, Observable, Subject, takeUntil } from 'rxjs';
 import { InputHandler } from 'src/app/game/input-handler';
 import { Renderer } from 'src/app/game/renderer';
 import { GameInstanceService } from 'src/app/services/game-instance.service';
@@ -23,7 +23,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   displayScore$ = new BehaviorSubject<number>(0);
   displayHighScore$ = new BehaviorSubject<number>(0);
 
-  gameEnded$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  gameEnded$: Observable<boolean> | undefined;
   startNewVerification$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   destroy$ = new Subject<void>();
 
@@ -36,7 +36,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.gameInstanceService.gameEnded$.subscribe(this.gameEnded$);
+    this.gameEnded$ = this.gameInstanceService.gameEnded$;
     this.activatedRoute.params
       .pipe(
         takeUntil(this.destroy$),

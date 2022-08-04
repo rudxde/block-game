@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, delay, Subject, takeUntil } from 'rxjs';
 import { Game, IField, IStoredGame } from '../game/game';
 import { migrateStore } from '../game/migrate-store';
 import { gameModeFactory } from '../game/modes/mode-factory';
@@ -14,7 +14,7 @@ export class GameInstanceService {
     public readonly gameEnded$ = new BehaviorSubject<boolean>(false);
     public readonly nextGameStarted$ = new Subject<void>();
 
-    constructor() { 
+    constructor() {
         (window as any)['game'] = () => this.game;
     }
 
@@ -35,7 +35,7 @@ export class GameInstanceService {
         );
         this.gameInstance = game;
         this.subscribeToGameEnd();
-        game.gameEnded$.next(storedGame.gameEnded);
+        this.gameEnded$.next(storedGame.gameEnded);
         return game;
     }
 
@@ -54,7 +54,7 @@ export class GameInstanceService {
         );
         this.gameInstance = game;
         this.subscribeToGameEnd();
-        game.gameEnded$.next(false);
+        this.gameEnded$.next(false);
         game.storeGame();
         return game;
     }
@@ -69,7 +69,10 @@ export class GameInstanceService {
     private subscribeToGameEnd() {
         this.nextGameStarted$.next();
         this.game.gameEnded$
-            .pipe(takeUntil(this.nextGameStarted$))
+            .pipe(
+                delay(250),
+                takeUntil(this.nextGameStarted$),
+            )
             .subscribe({
                 next: v => this.gameEnded$.next(v)
             });
