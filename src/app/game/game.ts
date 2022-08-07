@@ -37,7 +37,7 @@ export class Game {
     shapesByMaxDimension: Map<number, IShape[]> = new Map();
 
     isHighScore = false;
-    gameEnded$ = new BehaviorSubject<boolean>(false);
+    gameEnded$: BehaviorSubject<boolean>;
 
     highScore = 0;
     lastHighScore = 0;
@@ -48,6 +48,7 @@ export class Game {
         public nextShapes: IDraggingShape[] = [],
         public score = 0,
         public streakMultiplier = 1,
+        gameEnded = false,
     ) {
         this.setupShapeDimensionMap();
         this.loadHighScore();
@@ -61,6 +62,7 @@ export class Game {
         if (this.nextShapes.length === 0) {
             this.refillShapes();
         }
+        this.gameEnded$ = new BehaviorSubject<boolean>(gameEnded);
     }
 
     setupShapeDimensionMap() {

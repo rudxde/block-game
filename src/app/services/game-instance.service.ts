@@ -32,6 +32,7 @@ export class GameInstanceService {
             storedGame.nextShapes,
             storedGame.score,
             storedGame.streakMultiplier,
+            storedGame.gameEnded,
         );
         this.gameInstance = game;
         this.subscribeToGameEnd();
