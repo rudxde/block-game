@@ -22,6 +22,8 @@ export class Renderer {
     ctx: CanvasRenderingContext2D;
     public width: number = 0;
     public height: number = 0;
+    public viewWidth: number = 0;
+    public viewHeight: number = 0;
 
     dragPosition = { x: 0, y: 0 };
 
@@ -44,12 +46,20 @@ export class Renderer {
             .subscribe(() => this.draw());
     }
 
+    public getXTranslation() {
+        return (this.viewWidth - this.width) / 2;
+    }
 
     private draw() {
-        this.ctx.clearRect(0, 0, this.width, this.height);
+        const xTranslation = this.getXTranslation();
+        this.ctx.clearRect(0, 0, this.viewWidth, this.viewHeight);
+        this.ctx.translate(xTranslation, 0);
         this.drawGameField();
         this.drawNextShapes();
         this.drawDraggingShape();
+
+
+        this.ctx.translate(-xTranslation, 0);
     }
 
 
@@ -73,8 +83,12 @@ export class Renderer {
         } else {
             height = width + 200;
         }
-        this.canvas.height = height;
-        this.canvas.width = width;
+        // this.canvas.height = height;
+        // this.canvas.width = width;
+        this.canvas.height = window.innerHeight;
+        this.canvas.width = window.innerWidth;
+        this.viewHeight = window.innerHeight;
+        this.viewWidth = window.innerWidth;
         this.height = height;
         this.width = width;
     }

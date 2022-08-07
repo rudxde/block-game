@@ -66,7 +66,8 @@ export class InputHandler {
     }
 
     pointerMove(x: number, y: number) {
-        this.dragPosition = { x, y };
+        const xTranslation = this.renderer.getXTranslation();
+        this.dragPosition = { x: x - xTranslation, y };
         this.renderer.dragPosition = this.dragPosition;
 
         const draggingShape = this.gameInstanceService.game.getDraggingShape();
@@ -80,14 +81,15 @@ export class InputHandler {
         if (this.gameInstanceService.game.gameEnded$.value) {
             return;
         }
-        this.dragPosition = { x, y };
-        this.renderer.dragPosition.x = x;
+        const xTranslation = this.renderer.getXTranslation();
+        this.dragPosition = { x: x - xTranslation, y };
+        this.renderer.dragPosition.x = x - xTranslation;
         this.renderer.dragPosition.y = y;
         if (y < this.renderer.width + 16) {
             return;
         }
         this.pointerUp(x, y);
-        let selectedNextOne = Math.floor(3 * x / this.renderer.width);
+        let selectedNextOne = Math.floor(3 * (x - xTranslation) / this.renderer.width);
         this.gameInstanceService.game.setDraggingShape(selectedNextOne);
     }
 

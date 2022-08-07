@@ -4,7 +4,8 @@ mat-drawer-container {
     .drawer-content {
         display: flex;
         flex-direction: column;
-
+        height: 100vh;
+        overflow: hidden;
         .router-conent {
             flex-grow: 1;
         }

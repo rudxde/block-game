@@ -2,7 +2,7 @@
     display: grid;
     align-items: center;
     justify-items: center;
-
+    overflow: hidden;
     .canvas {
         grid-row: 2;
         grid-column: 1;
