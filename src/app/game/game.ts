@@ -41,6 +41,7 @@ export class Game {
 
     highScore = 0;
     lastHighScore = 0;
+    gameStartAnimationProgress = -50;
 
     constructor(
         private gameMode: IGameMode,
@@ -120,6 +121,9 @@ export class Game {
         }
         if (shouldStore) {
             this.storeGame();
+        }
+        if (this.gameStartAnimationProgress < 100) {
+            this.gameStartAnimationProgress += 5;
         }
     }
 

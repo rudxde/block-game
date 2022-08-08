@@ -175,20 +175,34 @@ export class Renderer {
 
         let x1 = (x / 9) * w + (cellSizeOfWidth * w * (1 - size) / 2);
         let y1 = (y / 9) * w + (cellSizeOfWidth * w * (1 - size) / 2);
-        this.ctx.fillRect(x1, y1, cellSizeOfWidth * w * size, cellSizeOfWidth * w * size);
+        let width = cellSizeOfWidth * w * size;
+
+        if (this.gameInstanceService.game.gameStartAnimationProgress < 100) {
+            let fullWith = width;
+            width *= this.gameInstanceService.game.gameStartAnimationProgress / 100;
+            width = Math.floor(width);
+            x1 += (fullWith - width) / 2;
+            y1 += (fullWith - width) / 2;
+        }
+        if (this.gameInstanceService.game.gameStartAnimationProgress < 0) {
+            return;
+        }
+
+
+        this.ctx.fillRect(x1, y1, width, width);
 
         this.ctx.lineWidth = 1;
         this.ctx.strokeStyle = fieldOuterBorderColor;
         if (field.marked) {
             this.ctx.strokeStyle = markedFieldOuterBorderColor;
         }
-        this.ctx.strokeRect(x1, y1, cellSizeOfWidth * w * size, cellSizeOfWidth * w * size);
+        this.ctx.strokeRect(x1, y1, width, width);
         if (field.marked) {
             // don't draw border for marked fields
             return;
         }
         this.ctx.strokeStyle = fieldInnerBorderColor;
-        this.ctx.strokeRect(x1 + 1, y1 + 1, cellSizeOfWidth * w * size - 2, cellSizeOfWidth * w * size - 2);
+        this.ctx.strokeRect(x1 + 1, y1 + 1, width - 2, width - 2);
         if (this.debugMode) {
             this.ctx.strokeStyle = '#FFF';
             this.ctx.lineWidth = 0.5;
@@ -216,7 +230,13 @@ export class Renderer {
             this.ctx.stroke();
             this.ctx.closePath();
         }
-
+        let scale = undefined;
+        if (this.gameInstanceService.game.gameStartAnimationProgress < 100) {
+            scale = this.gameInstanceService.game.gameStartAnimationProgress / 100;
+        }
+        if (this.gameInstanceService.game.gameStartAnimationProgress < 0) {
+            return;
+        }
         for (let i = 0; i < this.gameInstanceService.game.nextShapes.length; i++) {
             let shape = this.gameInstanceService.game.nextShapes[i];
             if (!shape.shape || shape.isDragging) {
@@ -225,7 +245,13 @@ export class Renderer {
             const { shapeCellSize, offsetX, offsetY } = this.getPositionOfNextShape(shape.shape, i);
             let shapeIsDisabled = (!this.gameInstanceService.game.shapeCanBePlaced(shape.shape)) || this.gameInstanceService.game.gameEnded$.value;
             let shapeHasWarning = !shapeIsDisabled && !this.gameInstanceService.game.shapeCanBePlaced(shape.shape, true);
-            this.drawShape(shape.shape, shapeCellSize, offsetX, offsetY, shapeIsDisabled, undefined, shapeHasWarning);
+
+            let scaledShapeCellSize = shapeCellSize;
+            if (scale) {
+                // scaledShapeCellSize *= scale;
+            }
+
+            this.drawShape(shape.shape, scaledShapeCellSize, offsetX, offsetY, shapeIsDisabled, scale, shapeHasWarning);
         }
     }
 
@@ -263,8 +289,8 @@ export class Renderer {
             this.ctx.fillText(`id: ${shape.id}`, offsetX, offsetY);
         }
         for (let field of shape.fields) {
-            let x = (field.x * shapeCellSize) + offsetX + (1 - blockScale) * shapeCellSize;
-            let y = (field.y * shapeCellSize) + offsetY + (1 - blockScale) * shapeCellSize;
+            let x = (field.x * shapeCellSize) + offsetX + ((1 - blockScale) * 0.5) * shapeCellSize;
+            let y = (field.y * shapeCellSize) + offsetY + ((1 - blockScale) * 0.5) * shapeCellSize;
             let scaledShapeCellSize = shapeCellSize * blockScale;
             if (disabled) {
                 this.ctx.fillStyle = fieldDisabledColor;
