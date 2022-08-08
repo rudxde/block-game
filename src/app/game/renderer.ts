@@ -219,7 +219,7 @@ export class Renderer {
             this.ctx.strokeStyle = '#555';
             this.ctx.lineWidth = 0.5;
             for (let i = 0; i < this.gameInstanceService.game.nextShapes.length; i++) {
-                let x = i * (previewSize + 16) + 16;
+                let x = i * (previewSize + 16) + 8;
                 let y = w + 16;
                 this.ctx.moveTo(x, y);
                 this.ctx.lineTo(x + previewSize, y);
@@ -267,7 +267,7 @@ export class Renderer {
             shapeCellSize *= 0.33;
         }
         let offsetY = w + 16 + ((previewSize - (shapeCellSize * shape.height)) / 2);
-        let offsetX = index * (previewSize + 16) + ((previewSize - (shapeCellSize * shape.width)) / 2) + 16;
+        let offsetX = index * (previewSize + 16) + ((previewSize - (shapeCellSize * shape.width)) / 2) + 8;
         return {
             shapeCellSize,
             offsetX,
