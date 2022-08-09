@@ -85,10 +85,12 @@ export class Renderer {
         }
         // this.canvas.height = height;
         // this.canvas.width = width;
-        this.canvas.height = window.innerHeight;
-        this.canvas.width = window.innerWidth;
-        this.viewHeight = window.innerHeight;
+        const scoreHeight = 104 + 16;
+        const toolbarHeigh = 48;
+        this.viewHeight = window.innerHeight - scoreHeight - toolbarHeigh;
         this.viewWidth = window.innerWidth;
+        this.canvas.height = this.viewHeight;
+        this.canvas.width = this.viewWidth;
         this.height = height;
         this.width = width;
     }
