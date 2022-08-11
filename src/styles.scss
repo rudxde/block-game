@@ -30,10 +30,30 @@ $block-game-theme: mat.define-light-theme((
   )
 ));
 
+$block-game-dark-theme: mat.define-dark-theme(
+  (
+    color: (
+      primary: $block-game-primary,
+      accent: $block-game-accent,
+      warn: $block-game-warn,
+    ),
+  )
+);
+
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include mat.all-component-themes($block-game-theme);
+
+.dark-theme {
+  @include mat.all-component-colors($block-game-dark-theme);
+}
+
+a:link,
+a:active,
+a:visited {
+  color: mat.get-color-from-palette($block-game-primary, 400);
+}
 
 /* You can add global styles to this file, and also import other style files */
 * {
@@ -41,7 +61,8 @@ $block-game-theme: mat.define-light-theme((
     padding: 0;
     margin: 0;
     font-family: sans-serif;
-    
+    transition: color 1s;
+    transition: background-color 1s;
 }
 html, body { height: 100%; }
 // body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

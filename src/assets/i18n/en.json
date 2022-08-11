@@ -30,7 +30,14 @@
         "update": "Update Settings",
         "update_enabled": "auto update checking is enabled",
         "update_disabled": "auto update checking is disabled",
-        "update_now": "Update now"
+        "update_now": "Update now",
+        "select_theme_mode": "Select theme:",
+        "theme_modes": {
+            "auto": "system (default)",
+            "light": "light",
+            "dark": "dark",
+            "day-cycle": "time of day"
+        }
     },
     "update_available": {
         "message": "Reload App to apply update",

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { MenuBarService } from 'src/app/services/menu-bar.service';
 import { AppUpdateService } from 'src/app/services/update.service';
+import { ThemeService, EThemeMode } from 'src/app/services/theme.service';
+
 
 @Component({
   selector: 'app-settings',
@@ -15,11 +17,18 @@ export class SettingsComponent implements OnInit {
 
   autoUpdateEnabled: boolean | undefined;
 
+  themeModes: EThemeMode[] = Object.values(EThemeMode);
+  selectedThemeMode: EThemeMode;
+
+
   constructor(
     private menuBarService: MenuBarService,
     private translocoService: TranslocoService,
     private appUpdateService: AppUpdateService,
-  ) { }
+    private themeService: ThemeService,
+  ) {
+    this.selectedThemeMode = themeService.getTimeMode();
+  }
 
   ngOnInit(): void {
     this.menuBarService.set('settings');
@@ -46,6 +55,11 @@ export class SettingsComponent implements OnInit {
 
   checkForUpdates(): void {
     this.appUpdateService.checkForUpdates(true);
+  }
+
+  selectTimeMode(mode: EThemeMode): void {
+    this.themeService.setThemeMode(mode);
+    this.selectedThemeMode = mode;
   }
 
 }

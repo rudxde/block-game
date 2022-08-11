@@ -24,6 +24,21 @@
       {{t('update_now')}}
     </button>
   </div>
+  
+  <div class="theme settings-section">
+    <h2>
+      {{t('select_theme_mode')}}
+    </h2>
+    <mat-form-field>
+      <mat-label>{{t('select_theme_mode')}}</mat-label>
+      <mat-select [value]="selectedThemeMode" (selectionChange)="selectTimeMode($event.value)">
+        <mat-option *ngFor="let mode of themeModes" [value]="mode">
+          {{t('theme_modes.' + mode)}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  
   <div class="flex-spacer"></div>
   <div>
     <a href="/3rdpartylicenses.txt">{{t('3rdpartylicenses')}}</a>

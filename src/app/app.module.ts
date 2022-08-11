@@ -24,6 +24,7 @@ import { AppUpdateService } from './services/update.service';
 import { ErrorComponent } from './components/error/error.component';
 import { GlobalErrorHandler } from './services/global-error.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { ThemeService } from './services/theme.service';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,9 @@ export class AppModule {
   constructor(
     translocoService: TranslocoService,
     appUpdateService: AppUpdateService,
+    themeService: ThemeService,
   ) {
+    themeService.init();
     let language = navigator.language;
     let localStorageLanguage = localStorage.getItem('language');
     if (localStorageLanguage) {

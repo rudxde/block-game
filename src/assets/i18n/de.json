@@ -30,7 +30,14 @@
         "update": "Update Einstellungen",
         "update_enabled": "Automatische Update Überprüfung ist aktiviert",
         "update_disabled": "Automatische Update Überprüfung ist deaktiviert",
-        "update_now": "Jetzt Update suchen"
+        "update_now": "Jetzt Update suchen",
+        "select_theme_mode": "Theme auswählen:",
+        "theme_modes": {
+            "auto": "System (Automatisch)",
+            "light": "Hell",
+            "dark": "Dunkel",
+            "day-cycle": "Tageszeit"
+        }
     },
     "update_available": {
         "message": "App Neustarten um Update einzuspielen",
