@@ -1,10 +1,12 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, interval, Observable, Subject, takeUntil } from 'rxjs';
+import { GameTheme } from 'src/app/game/game-theme';
 import { InputHandler } from 'src/app/game/input-handler';
 import { Renderer } from 'src/app/game/renderer';
 import { GameInstanceService } from 'src/app/services/game-instance.service';
 import { MenuBarService } from 'src/app/services/menu-bar.service';
+import { ThemeService } from 'src/app/services/theme.service';
 
 
 @Component({
@@ -33,6 +35,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private menuBarService: MenuBarService,
     public gameInstanceService: GameInstanceService,
+    private themeService: ThemeService,
   ) { }
 
   ngOnInit(): void {
@@ -74,11 +77,15 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.canvas) {
       throw new Error('canvas not found!');
     }
+    
+    const gameTheme = new GameTheme(this.themeService, this.debugMode);
+    
     this.renderer = new Renderer(
       this.canvas.nativeElement,
       this.debugMode,
       this.gameInstanceService,
       this.destroy$,
+      gameTheme,
     );
     this.inputHandler = new InputHandler(this.gameInstanceService, this.renderer, this.destroy$);
     this.inputHandler.setupListeners(this.canvas.nativeElement);

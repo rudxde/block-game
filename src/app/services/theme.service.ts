@@ -14,6 +14,8 @@ const THEME_MODE_KEY = 'themeMode';
 })
 export class ThemeService {
 
+  private _isDarkMode = false;
+
   constructor() { }
 
   init() {
@@ -26,13 +28,17 @@ export class ThemeService {
     window.localStorage.setItem(THEME_MODE_KEY, mode);
     this.updateThemeMode();
   }
-  
+
   getTimeMode(): EThemeMode {
     const mode = window.localStorage.getItem(THEME_MODE_KEY) ?? EThemeMode.AUTO;
     if (!this.isThemeMode(mode)) {
       throw new Error(`Invalid theme mode: ${mode}`);
     }
     return mode as EThemeMode;
+  }
+
+  isDarkMode(): boolean {
+    return this._isDarkMode;
   }
 
   private updateThemeMode() {
@@ -75,10 +81,12 @@ export class ThemeService {
 
   private disableDarkMode() {
     document.body.classList.remove('dark-theme');
+    this._isDarkMode = false;
   }
 
   private enableDarkMode() {
     document.body.classList.add('dark-theme');
+    this._isDarkMode = true;
   }
 
   private isThemeMode(x: string): x is EThemeMode {

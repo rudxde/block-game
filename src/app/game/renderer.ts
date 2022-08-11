@@ -1,21 +1,12 @@
 import {
     cellSizeOfWidth,
     draggingOffsetY,
-    fieldBaseColor,
-    fieldDisabledColor,
-    fieldHighlightColor,
-    fieldInnerBorderColor,
-    fieldLineColor,
-    fieldMarkedColor,
-    fieldOuterBorderColor,
-    fieldWarningColor,
-    markedFieldOuterBorderColor,
-    sectorLineColor
 } from './constants';
 import { IShape } from './shapes';
 import { HermiteInterpolation } from 'interpolations';
 import { GameInstanceService } from '../services/game-instance.service';
 import { animationFrameScheduler, interval, Observable, takeUntil } from 'rxjs';
+import { GameTheme } from './game-theme';
 
 export class Renderer {
 
@@ -32,6 +23,7 @@ export class Renderer {
         private debugMode: boolean,
         private gameInstanceService: GameInstanceService,
         private destroy$: Observable<void>,
+        private gameTheme: GameTheme,
     ) {
         let ctx = canvas.getContext('2d');
         if (!ctx) {
@@ -119,7 +111,7 @@ export class Renderer {
         }
 
         this.ctx.beginPath();
-        this.ctx.strokeStyle = fieldLineColor;
+        this.ctx.strokeStyle = this.gameTheme.getTheme().fieldLineColor.hex();
         this.ctx.lineWidth = 0.5;
         for (let i = 0; i <= 1; i += cellSizeOfWidth) {
             let w = Math.round(i * 1000) / 1000;
@@ -134,7 +126,7 @@ export class Renderer {
 
 
         this.ctx.beginPath();
-        this.ctx.strokeStyle = sectorLineColor;
+        this.ctx.strokeStyle = this.gameTheme.getTheme().sectorLineColor.hex();
         this.ctx.lineWidth = 2;
         for (let i = 0; i <= 1; i += cellSizeOfWidth * 3) {
             let w = Math.round(i * 1000) / 1000;
@@ -161,12 +153,12 @@ export class Renderer {
         if (!field.placed && !field.marked && (!field.removed && field.animationProgress !== 100)) {
             return;
         }
-        this.ctx.fillStyle = fieldBaseColor;
+        this.ctx.fillStyle = this.gameTheme.getTheme().fieldBaseColor.hex();
         if (field.marked) {
-            this.ctx.fillStyle = fieldMarkedColor;
+            this.ctx.fillStyle = this.gameTheme.getTheme().fieldMarkedColor.hex();
         }
         if (field.highlighted) {
-            this.ctx.fillStyle = fieldHighlightColor;
+            this.ctx.fillStyle = this.gameTheme.getTheme().fieldHighlightColor.hex();
         }
 
         let size = 1;
@@ -194,16 +186,16 @@ export class Renderer {
         this.ctx.fillRect(x1, y1, width, width);
 
         this.ctx.lineWidth = 1;
-        this.ctx.strokeStyle = fieldOuterBorderColor;
+        this.ctx.strokeStyle = this.gameTheme.getTheme().fieldOuterBorderColor.hex();
         if (field.marked) {
-            this.ctx.strokeStyle = markedFieldOuterBorderColor;
+            this.ctx.strokeStyle = this.gameTheme.getTheme().markedFieldOuterBorderColor.hex();
         }
         this.ctx.strokeRect(x1, y1, width, width);
         if (field.marked) {
             // don't draw border for marked fields
             return;
         }
-        this.ctx.strokeStyle = fieldInnerBorderColor;
+        this.ctx.strokeStyle = this.gameTheme.getTheme().fieldInnerBorderColor.hex();
         this.ctx.strokeRect(x1 + 1, y1 + 1, width - 2, width - 2);
         if (this.debugMode) {
             this.ctx.strokeStyle = '#FFF';
@@ -295,18 +287,18 @@ export class Renderer {
             let y = (field.y * shapeCellSize) + offsetY + ((1 - blockScale) * 0.5) * shapeCellSize;
             let scaledShapeCellSize = shapeCellSize * blockScale;
             if (disabled) {
-                this.ctx.fillStyle = fieldDisabledColor;
+                this.ctx.fillStyle = this.gameTheme.getTheme().fieldDisabledColor.hex();
             } else if (shapeHasWarning) {
-                this.ctx.fillStyle = fieldWarningColor;
+                this.ctx.fillStyle = this.gameTheme.getTheme().fieldWarningColor.hex();
             } else {
-                this.ctx.fillStyle = fieldBaseColor;
+                this.ctx.fillStyle = this.gameTheme.getTheme().fieldBaseColor.hex();
             }
             this.ctx.fillRect(x, y, scaledShapeCellSize, scaledShapeCellSize);
 
             this.ctx.lineWidth = 1;
-            this.ctx.strokeStyle = fieldOuterBorderColor;
+            this.ctx.strokeStyle = this.gameTheme.getTheme().fieldOuterBorderColor.hex();
             this.ctx.strokeRect(x, y, scaledShapeCellSize, scaledShapeCellSize);
-            this.ctx.strokeStyle = fieldInnerBorderColor;
+            this.ctx.strokeStyle = this.gameTheme.getTheme().fieldInnerBorderColor.hex();
             this.ctx.strokeRect(x + 1, y + 1, scaledShapeCellSize - 2, scaledShapeCellSize - 2);
 
             if (this.debugMode) {
