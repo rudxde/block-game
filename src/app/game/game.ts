@@ -133,7 +133,7 @@ export class Game {
         this.lastHighScore = this.highScore;
     }
 
-    refillShapes() {
+    refillShapes(retryCount = 0) {
         // The following dimensions exist 2,3.5,4,5,5.5,6,6.5,8
 
         let dimensionLimits = this.gameMode.getRefillShapeDimensionLimit(this);
@@ -143,6 +143,12 @@ export class Game {
             { shape: this.getRandomShape(dimensionLimits.maxDimension2, dimensionLimits.minDimension2), isDragging: false, index: 0 },
             { shape: this.getRandomShape(dimensionLimits.maxDimension3, dimensionLimits.minDimension3), isDragging: false, index: 0 },
         ];
+
+        if (!this.canDropAnyOfNextShapes() && this.gameMode.spawnRetryLimit && retryCount < this.gameMode.spawnRetryLimit) {
+            this.refillShapes(retryCount + 1);
+            return;
+        }
+
         shuffle(this.nextShapes);
         this.nextShapes.forEach((x, i) => x.index = i);
     }

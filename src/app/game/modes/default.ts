@@ -3,7 +3,9 @@ import type { Game } from '../game';
 
 export class DefaultGameMode implements IGameMode {
     name = 'default';
-    
+
+    spawnRetryLimit = 1;
+
     getRefillShapeDimensionLimit(game: Game): { maxDimension1: number, maxDimension2: number, maxDimension3: number } {
         let maxDimension1 = 8;
         let maxDimension2 = 8;

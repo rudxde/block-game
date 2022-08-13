@@ -11,4 +11,5 @@ export interface IGameMode {
         minDimension3?: number,
     };
     init?(game: Game): void;
+    spawnRetryLimit?: number;
 }
