@@ -24,7 +24,7 @@ export interface IStoredGame {
 }
 
 
-interface IDraggingShape {
+export interface IDraggingShape {
     shape?: IShape;
     isDragging: boolean;
     pickAnimation?: number;
@@ -42,6 +42,8 @@ export class Game {
     highScore = 0;
     lastHighScore = 0;
     gameStartAnimationProgress = -50;
+
+    stateProgress = 0;
 
     constructor(
         private gameMode: IGameMode,
@@ -97,12 +99,14 @@ export class Game {
     }
 
     tick() {
+        let hasAnimation = false;
         let shouldStore = false;
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
                 if (!this.gameField[i][j].removed) {
                     continue;
                 }
+                hasAnimation = true;
                 if ((this.gameField[i][j].animationProgress ?? 0) >= 100) {
                     this.gameField[i][j].removed = false;
                     this.gameField[i][j].animationProgress = undefined;
@@ -115,6 +119,7 @@ export class Game {
         const draggingShape = this.getDraggingShape();
         if (draggingShape && draggingShape.pickAnimation) {
             draggingShape.pickAnimation += 5;
+            hasAnimation = true;
             if (draggingShape.pickAnimation >= 100) {
                 draggingShape.pickAnimation = undefined;
             }
@@ -124,6 +129,10 @@ export class Game {
         }
         if (this.gameStartAnimationProgress < 100) {
             this.gameStartAnimationProgress += 5;
+            hasAnimation = true;
+        }
+        if(hasAnimation) {
+            this.stateProgress++;
         }
     }
 
@@ -185,6 +194,7 @@ export class Game {
         draggingShape.isDragging = true;
         draggingShape.shape = undefined;
         this.performChecksAfterPlaced(placed);
+        this.stateProgress++;
     }
 
     markDraggingShape(draggingShape: IDraggingShape, position: { x: number, y: number }) {
@@ -221,6 +231,7 @@ export class Game {
             return;
         }
         draggingShape.isDragging = false;
+        this.stateProgress++;
     }
 
     getDraggingShape(): IDraggingShape | undefined {

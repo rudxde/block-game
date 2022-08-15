@@ -5,7 +5,7 @@ import {
 import { IShape } from './shapes';
 import { HermiteInterpolation } from 'interpolations';
 import { GameInstanceService } from '../services/game-instance.service';
-import { animationFrameScheduler, interval, Observable, takeUntil } from 'rxjs';
+import { animationFrameScheduler, filter, interval, map, Observable, takeUntil } from 'rxjs';
 import { GameTheme } from './game-theme';
 
 export class Renderer {
@@ -16,7 +16,11 @@ export class Renderer {
     public viewWidth: number = 0;
     public viewHeight: number = 0;
 
-    dragPosition = { x: 0, y: 0 };
+    private dragPosition = { x: 0, y: 0 };
+
+    private lowFPSMode: boolean = false;
+
+    lastGameStateProgress: number = -1;
 
     constructor(
         private canvas: HTMLCanvasElement,
@@ -34,28 +38,36 @@ export class Renderer {
 
     startDrawing() {
         interval(0, animationFrameScheduler)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(() => this.draw());
+            .pipe(
+                map(x => [x % 4 === 0, x % 200 === 0]),
+                filter(([isLowFpsFrame]) => !this.lowFPSMode || isLowFpsFrame),
+                takeUntil(this.destroy$),
+            )
+            .subscribe(([_, isIdleFrame]) => {
+                let gameIsIdle = true;
+                if (this.lastGameStateProgress !== this.gameInstanceService.game.stateProgress) {
+                    this.lastGameStateProgress = this.gameInstanceService.game.stateProgress;
+                    gameIsIdle = false;
+                }
+                if (gameIsIdle && !isIdleFrame) {
+                    return;
+                }
+                this.draw();
+            });
     }
 
-    public getXTranslation() {
-        return (this.viewWidth - this.width) / 2;
+    setDragPosition(x?: number, y?: number) {
+        this.lastGameStateProgress = -1;
+        if (x) {
+            this.dragPosition.x = x;
+        }
+        if (y) {
+            this.dragPosition.y = y;
+        }
     }
-
-    private draw() {
-        const xTranslation = this.getXTranslation();
-        this.ctx.clearRect(0, 0, this.viewWidth, this.viewHeight);
-        this.ctx.translate(xTranslation, 0);
-        this.drawGameField();
-        this.drawNextShapes();
-        this.drawDraggingShape();
-
-
-        this.ctx.translate(-xTranslation, 0);
-    }
-
 
     setCanvasSize() {
+        this.lastGameStateProgress = -1;
         let padding = 16;
         if (!this.canvas) {
             throw new Error('canvas not found!');
@@ -96,9 +108,30 @@ export class Renderer {
         }
     }
 
+    public getXTranslation() {
+        return (this.viewWidth - this.width) / 2;
+    }
+
+    private draw() {
+        const xTranslation = this.getXTranslation();
+        this.ctx.clearRect(0, 0, this.viewWidth, this.viewHeight);
+        this.ctx.translate(xTranslation, 0);
+        this.drawGameField();
+
+
+        this.drawNextShapes();
+        this.drawDraggingShape();
+
+
+        this.ctx.translate(-xTranslation, 0);
+    }
+
+
+
 
     private drawGameField() {
         let w = this.width;
+        this.ctx.clearRect(0, 0, this.viewWidth, this.width);
 
         const line = (horizontal: boolean, position: number): void => {
             if (horizontal) {
@@ -321,6 +354,7 @@ export class Renderer {
             this.pickInterpolations = undefined;
             return;
         }
+
         let offsetX = this.dragPosition.x - (draggingShape.shape.width * cellSizeOfWidth * this.width / 2);
         let offsetY = this.dragPosition.y - (draggingShape.shape.height * cellSizeOfWidth * this.width) + draggingOffsetY;
         let shapeCellSize = this.width * cellSizeOfWidth;
