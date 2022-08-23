@@ -12,12 +12,14 @@
         "game_title": "Block Spiel",
         "game": "Spielen",
         "baby_mode": "Baby Modus",
+        "mode4": "Modus 4",
         "extreme_mode": "Extrem Modus",
         "settings": "Einstellungen"
     },
     "toolbar": {
         "baby": "Baby Modus",
         "extreme": "Extrem Modus",
+        "mode4": "Modus 4",
         "settings": "Einstellungen"
     },
     "settings": {
