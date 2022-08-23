@@ -13,6 +13,9 @@ export class InputHandler {
     ) { }
 
     setupListeners(canvas: HTMLCanvasElement) {
+        fromEvent(document, 'visibilitychange')
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => this.gameInstanceService.game.releaseDraggingShape());
         fromEvent(window, 'resize')
             .pipe(takeUntil(this.destroy$))
             .subscribe(() => this.renderer.setCanvasSize());
