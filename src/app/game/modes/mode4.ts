@@ -4,6 +4,7 @@ import { Shapes } from '../shapes';
 
 export class Mode4GameMode implements IGameMode {
     name = 'mode4';
+    spawnRetryLimit = 1;
 
     init(game: Game) {
         game.allShapes = [
@@ -14,18 +15,19 @@ export class Mode4GameMode implements IGameMode {
             ...Shapes.smallT,
         ];
         game.setupShapeDimensionMap();
-        console.log(game.shapesByMaxDimension);
     }
 
     getRefillShapeDimensionLimit(game: Game): { maxDimension1: number, maxDimension2: number, maxDimension3: number, minDimension1: number, minDimension2: number, minDimension3: number } {
-        // The following dimensions exist 2,3.5,4,5,5.5,6,6.5,8
-        let maxDimension1 = 6.5;
-        let maxDimension2 = 6.5;
-        let maxDimension3 = 6.5;
-        let minDimension1 = 4;
-        let minDimension2 = 4;
-        let minDimension3 = 4;
+        let maxDimension = 6.5;
+        let minDimension = 4;
 
-        return { maxDimension1, maxDimension2, maxDimension3, minDimension1, minDimension2, minDimension3 };
+        return {
+            maxDimension1: maxDimension,
+            maxDimension2: maxDimension,
+            maxDimension3: maxDimension,
+            minDimension1: minDimension,
+            minDimension2: minDimension,
+            minDimension3: minDimension,
+        };
     }
 }
