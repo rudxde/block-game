@@ -131,7 +131,7 @@ export class Game {
             this.gameStartAnimationProgress += 5;
             hasAnimation = true;
         }
-        if(hasAnimation) {
+        if (hasAnimation) {
             this.stateProgress++;
         }
     }
@@ -377,6 +377,13 @@ export class Game {
 
         this.addToScore(scoreIncrease);
 
+        if (this.fieldIsEmpty()) {
+            // score bonus for emptying the game field
+            const bonusPercentage = 0.2;
+            let bonus = Math.ceil(this.score * bonusPercentage) + 10;
+            this.addToScore(bonus);
+        }
+
         if (eliminations === 0) {
             this.streakMultiplier = 0;
         } else {
@@ -451,6 +458,16 @@ export class Game {
             this.gameField[field.x + position.x][field.y + position.y].placed = true;
         }
         return shape.fields.length;
+    }
+
+    private fieldIsEmpty(): boolean {
+        for (let i = 0; i < this.gameField.length; i++)
+            for (let j = 0; j < this.gameField[i].length; j++) {
+                if (this.gameField[i][j].placed) {
+                    return false;
+                }
+            }
+        return true;
     }
 
 }
