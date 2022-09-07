@@ -264,6 +264,9 @@ export class Game {
 
     private addToScore(n: number) {
         this.score += n;
+        if (this.score === 666) {
+            this.score += 1;
+        }
         if (this.score > this.highScore) {
             this.highScore = this.score;
             localStorage.setItem(this.gameMode.name + '_highScore', this.highScore.toString(10));
