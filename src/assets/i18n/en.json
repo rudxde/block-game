@@ -39,6 +39,14 @@
             "light": "light",
             "dark": "dark",
             "day-cycle": "time of day"
+        },
+        "dragging_offset": "Dragging-Offset:",
+        "dragging_offset_description": "How far is the shape displayed above the finger when it is moved?",
+        "dragging_offset_label": {
+            "0": "Small",
+            "1": "Normal",
+            "2": "Large",
+            "3": "Very Large"
         }
     },
     "update_available": {

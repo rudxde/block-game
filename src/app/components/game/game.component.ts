@@ -7,6 +7,7 @@ import { Renderer } from 'src/app/game/renderer';
 import { GameInstanceService } from 'src/app/services/game-instance.service';
 import { MenuBarService } from 'src/app/services/menu-bar.service';
 import { ThemeService } from 'src/app/services/theme.service';
+import { GameSettingsService } from '../../services/game-settings.service';
 
 
 @Component({
@@ -36,6 +37,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     private menuBarService: MenuBarService,
     public gameInstanceService: GameInstanceService,
     private themeService: ThemeService,
+    private gameSettingsService: GameSettingsService,
   ) { }
 
   ngOnInit(): void {
@@ -86,6 +88,7 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
       this.gameInstanceService,
       this.destroy$,
       gameTheme,
+      this.gameSettingsService.getGameSettings(),
     );
     this.inputHandler = new InputHandler(this.gameInstanceService, this.renderer, this.destroy$);
     this.inputHandler.setupListeners(this.canvas.nativeElement);

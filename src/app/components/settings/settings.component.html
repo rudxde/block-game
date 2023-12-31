@@ -38,6 +38,22 @@
       </mat-select>
     </mat-form-field>
   </div>
+
+  <div class="dragging-offset settings-section">
+    <h2>
+      {{t('dragging_offset')}}
+    </h2>
+    <mat-hint>{{t('dragging_offset_description')}}</mat-hint>
+    <mat-slider
+      thumbLabel
+      [displayWith]="getDraggingOffsetLabel"
+      step="1"
+      min="0"
+      max="3"
+      tickInterval="1"
+      [value]="draggingOffsetIndex"
+      (change)="setDraggingOffset($event.value ?? 1)"></mat-slider>
+  </div>
   
   <div class="flex-spacer"></div>
   <div>

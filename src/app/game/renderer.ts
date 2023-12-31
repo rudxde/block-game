@@ -1,12 +1,10 @@
-import {
-    cellSizeOfWidth,
-    draggingOffsetY,
-} from './constants';
+import { cellSizeOfWidth } from './constants';
 import { IShape } from './shapes';
 import { HermiteInterpolation } from 'interpolations';
 import { GameInstanceService } from '../services/game-instance.service';
 import { animationFrameScheduler, filter, interval, map, Observable, takeUntil } from 'rxjs';
 import { GameTheme } from './game-theme';
+import { IGameSettings } from '../services/game-settings.service';
 
 export class Renderer {
 
@@ -28,6 +26,7 @@ export class Renderer {
         private gameInstanceService: GameInstanceService,
         private destroy$: Observable<void>,
         private gameTheme: GameTheme,
+        private gameSettings: IGameSettings,
     ) {
         let ctx = canvas.getContext('2d');
         if (!ctx) {
@@ -101,7 +100,7 @@ export class Renderer {
 
     getDraggingCellPosition(dragging: IShape): { x: number, y: number } {
         let basePositionX = this.dragPosition.x - (dragging.width * cellSizeOfWidth * this.width / 2);
-        let basePositionY = this.dragPosition.y - (dragging.height * cellSizeOfWidth * this.width) + draggingOffsetY;
+        let basePositionY = this.dragPosition.y - (dragging.height * cellSizeOfWidth * this.width) - this.gameSettings.draggingOffset;
         return {
             x: Math.round(basePositionX / (this.width * cellSizeOfWidth)),
             y: Math.round(basePositionY / (this.width * cellSizeOfWidth))
@@ -356,7 +355,7 @@ export class Renderer {
         }
 
         let offsetX = this.dragPosition.x - (draggingShape.shape.width * cellSizeOfWidth * this.width / 2);
-        let offsetY = this.dragPosition.y - (draggingShape.shape.height * cellSizeOfWidth * this.width) + draggingOffsetY;
+        let offsetY = this.dragPosition.y - (draggingShape.shape.height * cellSizeOfWidth * this.width) - this.gameSettings.draggingOffset;
         let shapeCellSize = this.width * cellSizeOfWidth;
         let blockScale = 0.75;
         if (draggingShape.pickAnimation) {

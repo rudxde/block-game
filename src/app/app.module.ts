@@ -24,6 +24,7 @@ import { AppUpdateService } from './services/update.service';
 import { ErrorComponent } from './components/error/error.component';
 import { GlobalErrorHandler } from './services/global-error.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSliderModule } from '@angular/material/slider';
 import { ThemeService } from './services/theme.service';
 
 @NgModule({
@@ -52,6 +53,7 @@ import { ThemeService } from './services/theme.service';
     MatFormFieldModule,
     MatSnackBarModule,
     MatSlideToggleModule,
+    MatSliderModule,
   ],
   providers: [
     {

@@ -23,3 +23,8 @@ mat-form-field {
         margin-top: 16px;
     }
 }
+
+.dragging-offset {
+    display: flex;
+    flex-direction: column;
+}

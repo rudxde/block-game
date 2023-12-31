@@ -39,6 +39,14 @@
             "light": "Hell",
             "dark": "Dunkel",
             "day-cycle": "Tageszeit"
+        },
+        "dragging_offset": "Zieh-Offset:",
+        "dragging_offset_description": "Wie weit wird die Form über dem Finger angezeigt, wenn sie bewegt wird?",
+        "dragging_offset_label": {
+            "0": "Klein",
+            "1": "Normal",
+            "2": "Groß",
+            "3": "Sehr Groß"
         }
     },
     "update_available": {
