@@ -1,0 +1,86 @@
+{
+    "game": {
+        "new_game": "nuevo juego",
+        "game_over": "Fin del Juego",
+        "high_score": "Puntuación más Alta: {{ score }}",
+        "new_high_score": "Nueva Puntuación más Alta: {{ score }}",
+        "new_score": "Puntuación: {{ score }}",
+        "start-new-game-sure": "¿Estás seguro de que quieres iniciar un nuevo juego?",
+        "abort": "abortar"
+    },
+    "menu": {
+        "game_title": "Juego de Bloques",
+        "game": "Jugar",
+        "baby_mode": "Modo Bebé",
+        "mode4": "Modo 4",
+        "extreme_mode": "Modo Extremo",
+        "settings": "Ajustes"
+    },
+    "toolbar": {
+        "baby": "Modo Bebé",
+        "extreme": "Modo Extremo",
+        "mode4": "Modo 4",
+        "settings": "Ajustes"
+    },
+    "settings": {
+        "select_lang": "Seleccionar idioma:",
+        "3rdpartylicenses": "Licencias de código abierto",
+        "languages": {
+            "de": "alemán",
+            "en": "inglés"
+        },
+        "update": "Actualizar Ajustes",
+        "update_enabled": "la comprobación automática de actualizaciones está activada",
+        "update_disabled": "la comprobación automática de actualizaciones está desactivada",
+        "update_now": "Actualizar ahora",
+        "select_theme_mode": "Seleccionar tema:",
+        "theme_modes": {
+            "auto": "sistema (predeterminado)",
+            "light": "claro",
+            "dark": "oscuro",
+            "day-cycle": "hora del día"
+        },
+        "dragging_offset": "Desplazamiento al Arrastrar:",
+        "dragging_offset_description": "¿Qué tan lejos se muestra la forma por encima del dedo cuando se mueve?",
+        "dragging_offset_label": {
+            "0": "Pequeño",
+            "1": "Normal",
+            "2": "Grande",
+            "3": "Muy Grande"
+        }
+    },
+    "update_available": {
+        "message": "Recargar la aplicación para aplicar la actualización",
+        "action": "Recargar"
+    },
+    "no_update_available": {
+        "message": "No hay actualizaciones disponibles",
+        "action": "ok"
+    },
+    "error": {
+        "unknown": {
+            "title": "Error desconocido",
+            "message": "¡Ocurrió un error desconocido!"
+        },
+        "notFound": {
+            "title": "Error",
+            "message": "¡El recurso solicitado no pudo ser encontrado!"
+        },
+        "http_unknown": {
+            "title": "Error de Conexión",
+            "message": "Ocurrió un error de conexión. Por favor, inténtelo más tarde."
+        },
+        "http_0": {
+            "title": "Error de Conexión",
+            "message": "No se pudo establecer la conexión. Por favor, inténtelo más tarde."
+        },
+        "http_404": {
+            "title": "Error de Conexión",
+            "message": "¡El recurso solicitado no fue encontrado!"
+        },
+        "http_500": {
+            "title": "Error de Conexión",
+            "message": "Ocurrió un error en el servidor durante la conexión. Por favor, inténtelo más tarde."
+        }
+    }
+}
