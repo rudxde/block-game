@@ -8,12 +8,17 @@ import { GameInstanceService } from 'src/app/services/game-instance.service';
 import { MenuBarService } from 'src/app/services/menu-bar.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { GameSettingsService } from '../../services/game-settings.service';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { TranslocoModule } from '@ngneat/transloco';
 
 
 @Component({
-  selector: 'app-game',
-  templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss']
+    selector: 'app-game',
+    templateUrl: './game.component.html',
+    styleUrls: ['./game.component.scss'],
+    standalone: true,
+    imports: [TranslocoModule, NgIf, MatButtonModule, AsyncPipe]
 })
 export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 

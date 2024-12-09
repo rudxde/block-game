@@ -1,11 +1,15 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map, Observable, startWith, Subject, takeUntil } from 'rxjs';
+import { MatButtonModule } from '@angular/material/button';
+import { NgIf, AsyncPipe } from '@angular/common';
 
 @Component({
-  selector: 'app-menu-button',
-  templateUrl: './menu-button.component.html',
-  styleUrls: ['./menu-button.component.scss']
+    selector: 'app-menu-button',
+    templateUrl: './menu-button.component.html',
+    styleUrls: ['./menu-button.component.scss'],
+    standalone: true,
+    imports: [NgIf, MatButtonModule, AsyncPipe]
 })
 export class MenuButtonComponent implements OnInit, OnDestroy {
 

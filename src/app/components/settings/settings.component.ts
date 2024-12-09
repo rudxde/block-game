@@ -1,17 +1,26 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService, TranslocoModule } from '@ngneat/transloco';
 import { MenuBarService } from 'src/app/services/menu-bar.service';
 import { AppUpdateService } from 'src/app/services/update.service';
 import { ThemeService, EThemeMode } from 'src/app/services/theme.service';
 import { filter, firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { GameSettingsService } from '../../services/game-settings.service';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatOptionModule } from '@angular/material/core';
+import { NgFor } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
+    selector: 'app-settings',
+    templateUrl: './settings.component.html',
+    styleUrls: ['./settings.component.scss'],
+    standalone: true,
+    imports: [TranslocoModule, MatFormFieldModule, MatSelectModule, NgFor, MatOptionModule, MatSlideToggleModule, MatButtonModule, MatSliderModule, ReactiveFormsModule]
 })
 export class SettingsComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
