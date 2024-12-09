@@ -23,8 +23,10 @@ async function main(): Promise<void> {
 
     const app = await bootstrapApplication(AppComponent, {
         providers: [
-            provideRouter(routes),
+            provideHttpClient(withInterceptorsFromDi()),
             importProvidersFrom(BrowserModule),
+            provideAnimations(),
+            provideRouter(routes),
             importProvidersFrom(ServiceWorkerModule.register('ngsw-worker.js', {
                 enabled: environment.production,
                 registrationStrategy: 'registerImmediately',
@@ -39,15 +41,12 @@ async function main(): Promise<void> {
                 },
                 loader: TranslocoHttpLoaderService,
             }),
-            // importProvidersFrom(TranslocoRootModule),
             importProvidersFrom(MatSnackBarModule),
             {
                 provide: ErrorHandler,
                 useClass: GlobalErrorHandler,
             },
             AppUpdateService,
-            provideHttpClient(withInterceptorsFromDi()),
-            provideAnimations()
         ],
     });
     const translocoService = app.injector.get(TranslocoService);
