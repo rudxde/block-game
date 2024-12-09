@@ -9,7 +9,7 @@ COPY tsconfig.json .
 COPY tsconfig.app.json .
 COPY src ./src
 
-RUN npm run build
+RUN npm run build:prod
 
 FROM nginx:alpine
 ARG APP
