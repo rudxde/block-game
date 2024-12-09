@@ -27,7 +27,8 @@
         "3rdpartylicenses": "Licencias de código abierto",
         "languages": {
             "de": "alemán",
-            "en": "inglés"
+            "en": "inglés",
+            "es": "español"
         },
         "update": "Actualizar Ajustes",
         "update_enabled": "la comprobación automática de actualizaciones está activada",

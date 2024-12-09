@@ -27,7 +27,8 @@
         "3rdpartylicenses": "Open-source licenses",
         "languages": {
             "de": "german",
-            "en": "englisch"
+            "en": "englisch",
+            "es": "spanish"
         },
         "update": "Update Settings",
         "update_enabled": "auto update checking is enabled",
