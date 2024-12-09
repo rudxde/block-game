@@ -2,17 +2,17 @@ import { enableProdMode, ErrorHandler, importProvidersFrom } from '@angular/core
 import { environment } from './environments/environment';
 import { AppComponent } from './app/components/app/app.component';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { TranslocoRootModule } from './app/transloco-root.module';
 import { withInterceptorsFromDi, provideHttpClient } from '@angular/common/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { routes } from './app/app-routing';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { AppUpdateService } from './app/services/update.service';
 import { GlobalErrorHandler } from './app/services/global-error.service';
-import { TranslocoService } from '@ngneat/transloco';
+import { provideTransloco, TranslocoService } from '@jsverse/transloco';
 import { ThemeService } from './app/services/theme.service';
 import { provideRouter } from '@angular/router';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { TranslocoHttpLoaderService } from './app/services/transloco-http-loader.service';
 
 async function main(): Promise<void> {
 
@@ -24,13 +24,23 @@ async function main(): Promise<void> {
     const app = await bootstrapApplication(AppComponent, {
         providers: [
             provideRouter(routes),
-            importProvidersFrom(BrowserModule, ServiceWorkerModule.register('ngsw-worker.js', {
+            importProvidersFrom(BrowserModule),
+            importProvidersFrom(ServiceWorkerModule.register('ngsw-worker.js', {
                 enabled: environment.production,
                 registrationStrategy: 'registerImmediately',
+            })),
+            provideTransloco({
+                config: {
+                    availableLangs: ['en', 'de', 'es'],
+                    defaultLang: 'en',
+                    fallbackLang: 'en',
+                    reRenderOnLangChange: true,
+                    prodMode: environment.production,
+                },
+                loader: TranslocoHttpLoaderService,
             }),
-                TranslocoRootModule,
-                MatSnackBarModule,
-            ),
+            // importProvidersFrom(TranslocoRootModule),
+            importProvidersFrom(MatSnackBarModule),
             {
                 provide: ErrorHandler,
                 useClass: GlobalErrorHandler,

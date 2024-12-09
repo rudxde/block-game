@@ -10,7 +10,7 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { GameSettingsService } from '../../services/game-settings.service';
 import { MatButtonModule } from '@angular/material/button';
 import { NgIf, AsyncPipe } from '@angular/common';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule } from '@jsverse/transloco';
 
 
 @Component({

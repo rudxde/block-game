@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { filter, firstValueFrom, take, tap, throttleTime } from 'rxjs';
 
 const AUTO_UPDATE_ENABLED_KEY = 'autoUpdateEnabled';

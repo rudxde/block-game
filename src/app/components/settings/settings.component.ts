@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { TranslocoService, TranslocoModule } from '@ngneat/transloco';
+import { TranslocoService, TranslocoModule } from '@jsverse/transloco';
 import { MenuBarService } from 'src/app/services/menu-bar.service';
 import { AppUpdateService } from 'src/app/services/update.service';
 import { ThemeService, EThemeMode } from 'src/app/services/theme.service';
