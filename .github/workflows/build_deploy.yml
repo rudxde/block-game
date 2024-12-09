@@ -40,3 +40,5 @@ jobs:
           push: true
           tags: rudxde/block:latest
           platforms: linux/amd64,linux/arm64
+          cache-from: type=registry,ref=rudxde/block:buildcache
+          cache-to: type=registry,ref=rudxde/block:buildcache,mode=max
