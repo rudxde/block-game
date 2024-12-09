@@ -17,6 +17,11 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
+      - name: add commit to ngsw-config.json
+        run: |
+          jq '.appData.GITHUB_SHA += "${{ github.sha }}"' ngsw-config.json > ngsw-config-tmp.json
+          rm ngsw-config.json
+          mv ngsw-config-tmp.json ngsw-config.json
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
