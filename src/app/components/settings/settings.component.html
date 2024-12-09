@@ -1,39 +1,48 @@
-<div class="settings" *transloco="let t, read: 'settings'">
+<div class="settings" *transloco="let t; read: 'settings'">
   <div class="language-select settings-section">
     <h2>
-      {{t('select_lang')}}
+      {{ t("select_lang") }}
     </h2>
     <mat-form-field>
-      <mat-label>{{t('select_lang')}}</mat-label>
-      <mat-select [value]="activeLang" (selectionChange)="selectLang($event.value)">
+      <mat-label>{{ t("select_lang") }}</mat-label>
+      <mat-select
+        [value]="activeLang"
+        (selectionChange)="selectLang($event.value)"
+      >
         <mat-option *ngFor="let lang of availableLangs" [value]="lang">
-          {{t('languages.' + lang)}}
+          {{ t("languages." + lang) }}
         </mat-option>
       </mat-select>
     </mat-form-field>
   </div>
   <div class="update settings-section">
     <h2>
-      {{t('update')}}
+      {{ t("update") }}
     </h2>
-    <mat-slide-toggle (change)="setAutoUpdate($event.checked)" [checked]="autoUpdateEnabled">
-      {{ autoUpdateEnabled ? t('update_enabled') : t('update_disabled') }}
+    <mat-slide-toggle
+      (change)="setAutoUpdate($event.checked)"
+      [checked]="autoUpdateEnabled"
+    >
+      {{ autoUpdateEnabled ? t("update_enabled") : t("update_disabled") }}
     </mat-slide-toggle>
     <br />
     <button mat-raised-button (click)="checkForUpdates()" class="update-now">
-      {{t('update_now')}}
+      {{ t("update_now") }}
     </button>
   </div>
-  
+
   <div class="theme settings-section">
     <h2>
-      {{t('select_theme_mode')}}
+      {{ t("select_theme_mode") }}
     </h2>
     <mat-form-field>
-      <mat-label>{{t('select_theme_mode')}}</mat-label>
-      <mat-select [value]="selectedThemeMode" (selectionChange)="selectTimeMode($event.value)">
+      <mat-label>{{ t("select_theme_mode") }}</mat-label>
+      <mat-select
+        [value]="selectedThemeMode"
+        (selectionChange)="selectTimeMode($event.value)"
+      >
         <mat-option *ngFor="let mode of themeModes" [value]="mode">
-          {{t('theme_modes.' + mode)}}
+          {{ t("theme_modes." + mode) }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -41,9 +50,9 @@
 
   <div class="dragging-offset settings-section">
     <h2>
-      {{t('dragging_offset')}}
+      {{ t("dragging_offset") }}
     </h2>
-    <mat-hint>{{t('dragging_offset_description')}}</mat-hint>
+    <mat-hint>{{ t("dragging_offset_description") }}</mat-hint>
     <mat-slider
       thumbLabel
       [displayWith]="getDraggingOffsetLabel"
@@ -51,12 +60,13 @@
       min="0"
       max="3"
       tickInterval="1"
-      [value]="draggingOffsetIndex"
-      (change)="setDraggingOffset($event.value ?? 1)"></mat-slider>
+    >
+      <input matSliderThumb [formControl]="draggingOffset" />
+    </mat-slider>
   </div>
-  
+
   <div class="flex-spacer"></div>
   <div>
-    <a href="/3rdpartylicenses.txt">{{t('3rdpartylicenses')}}</a>
+    <a href="/3rdpartylicenses.txt">{{ t("3rdpartylicenses") }}</a>
   </div>
 </div>

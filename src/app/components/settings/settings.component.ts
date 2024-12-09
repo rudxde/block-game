@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
 import { MenuBarService } from 'src/app/services/menu-bar.service';
 import { AppUpdateService } from 'src/app/services/update.service';
 import { ThemeService, EThemeMode } from 'src/app/services/theme.service';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { GameSettingsService } from '../../services/game-settings.service';
+import { FormControl } from '@angular/forms';
 
 
 @Component({
@@ -12,8 +13,8 @@ import { GameSettingsService } from '../../services/game-settings.service';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class SettingsComponent implements OnInit {
-
+export class SettingsComponent implements OnInit, OnDestroy {
+  destroy$ = new Subject<void>();
   availableLangs: string[] = [];
   activeLang: string = '';
 
@@ -23,14 +24,14 @@ export class SettingsComponent implements OnInit {
   selectedThemeMode: EThemeMode;
 
   draggingOffsetLabels: string[] = [];
-  draggingOffsetIndex: number = 0;
+  draggingOffset = new FormControl<number>(0);
 
   draggingOffsetMap = [
     16,
     32,
     64,
     128,
-  ];
+  ] as const;
 
   constructor(
     private menuBarService: MenuBarService,
@@ -53,10 +54,22 @@ export class SettingsComponent implements OnInit {
     });
     this.loadTranslations();
     this.autoUpdateEnabled = this.appUpdateService.autoUpdateEnabled();
-    this.draggingOffsetIndex = this.draggingOffsetMap.findIndex(x => x === this.gameSettingsService.getGameSettings().draggingOffset);
-    if (this.draggingOffsetIndex === -1) {
-      this.draggingOffsetIndex = 1;
+    let draggingOffsetIndex = this.draggingOffsetMap.findIndex(x => x === this.gameSettingsService.getGameSettings().draggingOffset);
+    if (draggingOffsetIndex === -1) {
+      draggingOffsetIndex = 1;
     }
+    this.draggingOffset.setValue(draggingOffsetIndex);
+    this.draggingOffset.valueChanges
+      .pipe(
+        filter((value): value is number => !!value),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(value => this.setDraggingOffset(value));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private loadTranslations() {
@@ -96,7 +109,6 @@ export class SettingsComponent implements OnInit {
   setDraggingOffset(value: number): void {
     let draggingOffset = this.draggingOffsetMap[value];
     this.gameSettingsService.setDraggingOffset(draggingOffset);
-    this.draggingOffsetIndex = value;
   }
 
   getDraggingOffsetLabel = (index: number): string => {
