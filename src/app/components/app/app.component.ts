@@ -22,6 +22,7 @@ export class AppComponent implements OnInit {
   drawerOpen = signal<boolean>(false);
 
   // This is a workaround, since the sidenav wont open on the settings page for some reason, why this helps, i have no idea...
+  // cold be this one: https://stackoverflow.com/questions/59864180/angular-sidenav-toggle-doesnt-work-after-button-reappear-by-ngif
   _ = effect(() => this.drawerOpen());
 
   title$: BehaviorSubject<string | undefined>;
