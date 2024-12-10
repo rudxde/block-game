@@ -1,4 +1,4 @@
-mat-drawer-container {
+.app {
     height: 100vh;
 
     .drawer-content {
@@ -6,7 +6,7 @@ mat-drawer-container {
         flex-direction: column;
         height: 100vh;
         overflow: hidden;
-        .router-conent {
+        .router-content {
             flex-grow: 1;
         }
     }

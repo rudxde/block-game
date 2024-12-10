@@ -1,5 +1,5 @@
-<mat-drawer-container>
-    <mat-drawer #drawer mode="over">
+<mat-sidenav-container  class="app">
+    <mat-sidenav [fixedInViewport]="true" [opened]="drawerOpen()" (closed)="drawerOpen.set(false)" #drawer mode="over">
         <div class="menu" *transloco="let t, read: 'menu'">
 
             <div class="title">
@@ -21,10 +21,10 @@
             <app-menu-button class="menu-button" [link]="['settings']" [text]="t('settings')"
                 (clicked)="drawer.toggle()"></app-menu-button>
         </div>
-    </mat-drawer>
-    <mat-drawer-content class="drawer-content">
+    </mat-sidenav>
+    <mat-sidenav-content class="drawer-content">
         <mat-toolbar class="toolbar" *transloco="let t, read: 'toolbar'">
-            <button class="toggle-menu" mat-icon-button (click)="drawer.toggle()">
+            <button class="toggle-menu" mat-icon-button (click)="toggleDrawer()">
                 <mat-icon>menu</mat-icon>
             </button>
 
@@ -40,8 +40,8 @@
                 </button>
             </span>
         </mat-toolbar>
-        <div class="router-conent">
+        <div class="router-content">
             <router-outlet></router-outlet>
         </div>
-    </mat-drawer-content>
-</mat-drawer-container>
+    </mat-sidenav-content>
+</mat-sidenav-container>
