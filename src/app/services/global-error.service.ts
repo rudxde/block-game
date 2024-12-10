@@ -1,11 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
     constructor(
-        private router: Router,
+        private snackBar: MatSnackBar,
     ) { }
 
     handleError(error: any) {
@@ -25,7 +25,7 @@ export class GlobalErrorHandler implements ErrorHandler {
                 httpErrorCore = 'http_unknown';
             }
         }
-        this.router.navigate([`/error`], { queryParams: { code: httpErrorCore || 'unknown' } });
         console.error(error);
+        this.snackBar.open(`Error: ${httpErrorCore ?? error.message}`, undefined, { duration: 5000, politeness: 'assertive' });
     }
 }

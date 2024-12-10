@@ -7,7 +7,6 @@ export const routes: Routes = [
   { path: 'game', component: GameComponent },
   { path: 'game/:mode', component: GameComponent },
   { path: 'settings', component: SettingsComponent },
-  { path: 'error', component: ErrorComponent },
   { path: '', pathMatch: 'full', redirectTo: 'game' },
   { path: '**', component: ErrorComponent, data: { code: 'notFound' } }
 ];
