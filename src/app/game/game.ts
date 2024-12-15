@@ -412,6 +412,7 @@ export class Game {
     private getRandomShape(maxDimension: number, minDimension?: number): IShape {
         let shapesByDimension = this.shapesByMaxDimension.get(maxDimension);
         if (!shapesByDimension) {
+            console.log(this.shapesByMaxDimension);
             throw new Error(`unknown shape dimension ${maxDimension}`);
         }
         if (minDimension) {
