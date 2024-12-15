@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, interval, Observable, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, filter, interval, Observable, Subject, takeUntil } from 'rxjs';
 import { GameTheme } from 'src/app/game/game-theme';
 import { InputHandler } from 'src/app/game/input-handler';
 import { Renderer } from 'src/app/game/renderer';
@@ -101,9 +101,12 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderer.startDrawing();
 
     interval(10)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        filter(() => this.gameInstanceService.gameInitialized()),
+        takeUntil(this.destroy$)
+      )
       .subscribe({
-        next: this.tick.bind(this)
+        next: () => this.tick(),
       })
   }
 

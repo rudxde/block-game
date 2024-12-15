@@ -67,6 +67,10 @@ export class GameInstanceService {
         return this.gameInstance;
     }
 
+    gameInitialized() : boolean {
+        return !!this.gameInstance;
+    }
+
     private subscribeToGameEnd() {
         this.nextGameStarted$.next();
         this.game.gameEnded$

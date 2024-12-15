@@ -40,6 +40,7 @@ export class Renderer {
             .pipe(
                 map(x => [x % 4 === 0, x % 200 === 0]),
                 filter(([isLowFpsFrame]) => !this.lowFPSMode || isLowFpsFrame),
+                filter(() => this.gameInstanceService.gameInitialized()),
                 takeUntil(this.destroy$),
             )
             .subscribe(([_, isIdleFrame]) => {
