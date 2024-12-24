@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, ElementRef, OnDestroy, OnInit, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, filter, interval, Observable, Subject, takeUntil } from 'rxjs';
 import { GameTheme } from 'src/app/game/game-theme';
@@ -11,15 +11,16 @@ import { GameSettingsService } from '../../services/game-settings.service';
 import { MatButtonModule } from '@angular/material/button';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 
 @Component({
-    selector: 'app-game',
-    templateUrl: './game.component.html',
-    styleUrls: ['./game.component.scss'],
-    imports: [TranslocoModule, NgIf, MatButtonModule, AsyncPipe]
+  selector: 'app-game',
+  templateUrl: './game.component.html',
+  styleUrls: ['./game.component.scss'],
+  imports: [TranslocoModule, NgIf, MatButtonModule]
 })
-export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
+export class GameComponent implements AfterViewInit, OnDestroy {
 
   debugMode = false;
 
@@ -27,12 +28,34 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   private inputHandler: InputHandler | undefined;
 
 
-  displayScore$ = new BehaviorSubject<number>(0);
-  displayHighScore$ = new BehaviorSubject<number>(0);
+  displayScore = signal<number>(0);
+  displayHighScore = signal<number>(0);
 
-  gameEnded$: Observable<boolean> | undefined;
-  startNewVerification$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  gameEnded = toSignal(this.gameInstanceService.gameEnded$);
+  startNewVerification = signal(false);
   destroy$ = new Subject<void>();
+  activatedRouteParams = toSignal(this.activatedRoute.params, { requireSync: true });
+  mode = computed(() => {
+    const params = this.activatedRouteParams();
+    const modeParam = params['mode'];
+    if (modeParam && typeof modeParam === 'string') {
+      return modeParam;
+    }
+    return 'default';
+  });
+
+  loadGame = effect(() => {
+    const mode = this.mode();
+    this.menuBarService.set(
+      (mode === 'default' ? undefined : mode),
+      {
+        icon: 'replay',
+        title: 'new Game',
+        click: () => this.askVerificationForNewGame(),
+      }
+    );
+    this.gameInstanceService.loadGame(mode);
+  })
 
   @ViewChild('canvas', { read: ElementRef }) canvas?: ElementRef<HTMLCanvasElement>;
 
@@ -44,19 +67,6 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
     private gameSettingsService: GameSettingsService,
   ) { }
 
-  ngOnInit(): void {
-    this.gameEnded$ = this.gameInstanceService.gameEnded$;
-    this.activatedRoute.params
-      .pipe(
-        takeUntil(this.destroy$),
-      )
-      .subscribe({
-        next: () => {
-          let mode: string = this.getMode();
-          this.gameInstanceService.loadGame(mode);
-        }
-      });
-  }
 
   private getMode() {
     const params = this.activatedRoute.snapshot.params;
@@ -77,15 +87,16 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroy$.next();
+    this.destroy$.complete();
   }
 
   ngAfterViewInit(): void {
     if (!this.canvas) {
       throw new Error('canvas not found!');
     }
-    
+
     const gameTheme = new GameTheme(this.themeService, this.debugMode);
-    
+
     this.renderer = new Renderer(
       this.canvas.nativeElement,
       this.debugMode,
@@ -112,38 +123,38 @@ export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
   displayCounterUpdateCoolDown = 0;
   tick() {
     if (this.displayCounterUpdateCoolDown === 0) {
-      this.updateDisplayCounter(this.gameInstanceService.game.score, this.displayScore$);
-      this.updateDisplayCounter(this.gameInstanceService.game.highScore, this.displayHighScore$);
+      this.updateDisplayCounter(this.gameInstanceService.game.score, this.displayScore);
+      this.updateDisplayCounter(this.gameInstanceService.game.highScore, this.displayHighScore);
       this.displayCounterUpdateCoolDown = 5;
     }
     this.displayCounterUpdateCoolDown--;
     this.gameInstanceService.game.tick();
   }
 
-  updateDisplayCounter(goal: number, display$: BehaviorSubject<number>): void {
-    if (goal > display$.value) {
-      let inc = (goal - display$.value) / 5;
+  updateDisplayCounter(goal: number, display: WritableSignal<number>): void {
+    if (goal > display()) {
+      let inc = (goal - display()) / 5;
       if (inc < 1) {
         inc = 1;
       }
       inc = Math.floor(inc);
-      display$.next(display$.value + inc);
-    } else if (goal < display$.value) {
-      display$.next(goal);
+      display.set(display() + inc);
+    } else if (goal < display()) {
+      display.set(goal);
     }
   }
 
   askVerificationForNewGame() {
-    this.startNewVerification$.next(true);
+    this.startNewVerification.set(true);
   }
 
   newGame() {
     this.gameInstanceService.newGame(this.getMode());
-    this.startNewVerification$.next(false);
+    this.startNewVerification.set(false);
   }
 
   newGameAbort() {
-    this.startNewVerification$.next(false);
+    this.startNewVerification.set(false);
   }
 
 }

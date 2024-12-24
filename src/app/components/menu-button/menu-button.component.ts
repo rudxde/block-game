@@ -1,64 +1,49 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, map, Observable, startWith, Subject, takeUntil } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
-import { NgIf, AsyncPipe } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
 
 @Component({
-    selector: 'app-menu-button',
-    templateUrl: './menu-button.component.html',
-    styleUrls: ['./menu-button.component.scss'],
-    imports: [NgIf, MatButtonModule, AsyncPipe]
+  selector: 'app-menu-button',
+  templateUrl: './menu-button.component.html',
+  styleUrls: ['./menu-button.component.scss'],
+  imports: [MatButtonModule]
 })
-export class MenuButtonComponent implements OnInit, OnDestroy {
+export class MenuButtonComponent {
+  link = input.required<string[]>();
+  text = input.required<string>();
+  clicked = output<void>();
 
-  destroy$ = new Subject<void>();
+  routed = toSignal(this.router.events.pipe(filter(event => event instanceof NavigationEnd)));
+  currentRoute = computed(() => {
+    const _dependsOn = this.routed();
+    return this.activatedRoute.snapshot.firstChild?.url ?? [];
+  });
 
-  @Input('link') link?: string[];
-  @Input('text') text?: string;
-  @Output('clicked') clicked = new EventEmitter<void>();
-
-  isActivatedRoute$: Observable<boolean> | undefined;
+  isActivatedRoute = computed(() => {
+    const urlSegments = this.currentRoute();
+    const link = this.link();
+    if (!urlSegments || !link) {
+      return false
+    }
+    if (link.length !== urlSegments.length) {
+      return false;
+    }
+    for (let i = 0; i < urlSegments.length; i++) {
+      if (urlSegments[i].path !== link[i]) {
+        return false;
+      }
+    }
+    return true;
+  });
 
   constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
+    private readonly router: Router,
+    private readonly activatedRoute: ActivatedRoute,
   ) { }
 
-
-  ngOnInit(): void {
-    this.isActivatedRoute$ = this.router.events
-      .pipe(
-        filter(x => x instanceof NavigationEnd),
-        startWith(''),
-        map(() => {
-          const urlSegments = this.activatedRoute.snapshot.firstChild?.url;
-          if (!urlSegments || !this.link) {
-            return false
-          }
-          if (this.link.length !== urlSegments.length) {
-            return false;
-          }
-          for (let i = 0; i < urlSegments.length; i++) {
-            if (urlSegments[i].path !== this.link[i]) {
-              return false;
-            }
-          }
-          return true;
-        }),
-        takeUntil(this.destroy$)
-      );
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-  }
-
-
-  async openLink(path: string[] | undefined) {
-    if (!path) {
-      throw new Error('Link path is undefined');
-    }
+  async openLink(path: string[]) {
     await this.router.navigate(path);
     this.clicked.emit();
   }

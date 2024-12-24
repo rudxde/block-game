@@ -1,8 +1,8 @@
-import { Component, effect, OnInit, signal, ViewChild } from '@angular/core';
-import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
+import { Component, effect, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router, RouterOutlet } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
-import { IMenuBarActionButton, MenuBarService } from 'src/app/services/menu-bar.service';
+import { MenuBarService } from 'src/app/services/menu-bar.service';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,10 +11,10 @@ import { MenuButtonComponent } from '../menu-button/menu-button.component';
 import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    imports: [MatSidenavModule, TranslocoModule, MenuButtonComponent, MatToolbarModule, MatButtonModule, MatIconModule, NgIf, RouterOutlet, AsyncPipe]
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  imports: [MatSidenavModule, TranslocoModule, MenuButtonComponent, MatToolbarModule, MatButtonModule, MatIconModule, NgIf, RouterOutlet]
 })
 export class AppComponent implements OnInit {
 
@@ -24,16 +24,13 @@ export class AppComponent implements OnInit {
   // cold be this one: https://stackoverflow.com/questions/59864180/angular-sidenav-toggle-doesnt-work-after-button-reappear-by-ngif
   _ = effect(() => this.drawerOpen());
 
-  title$: BehaviorSubject<string | undefined>;
-  actionButton$: BehaviorSubject<IMenuBarActionButton | undefined>;
+  title = toSignal(this.menuBarService.title);
+  actionButton = toSignal(this.menuBarService.actionButton);
 
   constructor(
-    private router: Router,
-    menuBarService: MenuBarService,
-  ) {
-    this.title$ = menuBarService.title;
-    this.actionButton$ = menuBarService.actionButton;
-  }
+    private readonly router: Router,
+    private readonly menuBarService: MenuBarService,
+  ) { }
 
   ngOnInit(): void {
   }
