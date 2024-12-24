@@ -6,7 +6,6 @@ import { TranslocoModule } from '@jsverse/transloco';
     selector: 'app-error',
     templateUrl: './error.component.html',
     styleUrls: ['./error.component.scss'],
-    standalone: true,
     imports: [TranslocoModule]
 })
 export class ErrorComponent implements OnInit {

@@ -19,7 +19,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     selector: 'app-settings',
     templateUrl: './settings.component.html',
     styleUrls: ['./settings.component.scss'],
-    standalone: true,
     imports: [TranslocoModule, MatFormFieldModule, MatSelectModule, NgFor, MatOptionModule, MatSlideToggleModule, MatButtonModule, MatSliderModule, ReactiveFormsModule]
 })
 export class SettingsComponent implements OnInit, OnDestroy {

@@ -8,7 +8,6 @@ import { NgIf, AsyncPipe } from '@angular/common';
     selector: 'app-menu-button',
     templateUrl: './menu-button.component.html',
     styleUrls: ['./menu-button.component.scss'],
-    standalone: true,
     imports: [NgIf, MatButtonModule, AsyncPipe]
 })
 export class MenuButtonComponent implements OnInit, OnDestroy {

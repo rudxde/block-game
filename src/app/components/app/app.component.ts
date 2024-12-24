@@ -11,11 +11,10 @@ import { MenuButtonComponent } from '../menu-button/menu-button.component';
 import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
-  standalone: true,
-  imports: [MatSidenavModule, TranslocoModule, MenuButtonComponent, MatToolbarModule, MatButtonModule, MatIconModule, NgIf, RouterOutlet, AsyncPipe]
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    imports: [MatSidenavModule, TranslocoModule, MenuButtonComponent, MatToolbarModule, MatButtonModule, MatIconModule, NgIf, RouterOutlet, AsyncPipe]
 })
 export class AppComponent implements OnInit {
 

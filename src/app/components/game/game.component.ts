@@ -17,7 +17,6 @@ import { TranslocoModule } from '@jsverse/transloco';
     selector: 'app-game',
     templateUrl: './game.component.html',
     styleUrls: ['./game.component.scss'],
-    standalone: true,
     imports: [TranslocoModule, NgIf, MatButtonModule, AsyncPipe]
 })
 export class GameComponent implements OnInit, AfterViewInit, OnDestroy {
