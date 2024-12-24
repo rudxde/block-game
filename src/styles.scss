@@ -1,50 +1,49 @@
 @use 'icons';
-
 @use '@angular/material' as mat;
+
 @include mat.elevation-classes();
 @include mat.app-background();
 
-$block-game-primary: mat.m2-define-palette(mat.$m2-indigo-palette);
-$block-game-accent: mat.m2-define-palette(mat.$m2-pink-palette, A200, A100, A400);
+$primary-palette: mat.$blue-palette;
+$accent-palette: mat.$azure-palette;
 
-$block-game-warn: mat.m2-define-palette(mat.$m2-red-palette);
 
-$block-game-theme: mat.m2-define-light-theme((
-  color: (
-    primary: $block-game-primary,
-    accent: $block-game-accent,
-    warn: $block-game-warn,
-  )
-));
+$light-theme: mat.define-theme((color: (theme-type: light,
+        primary: $primary-palette,
+        tertiary: $accent-palette,
+      )));
 
-$block-game-dark-theme: mat.m2-define-dark-theme(
-  (
-    color: (
-      primary: $block-game-primary,
-      accent: $block-game-accent,
-      warn: $block-game-warn,
-    ),
-  )
-);
-@include mat.all-component-themes($block-game-theme);
+$dark-theme: mat.define-theme((color: (theme-type: dark,
+        primary: $primary-palette,
+        tertiary: $accent-palette,
+      ),
+    ));
 
-.dark-theme {
-  @include mat.all-component-colors($block-game-dark-theme);
-}
+html {
+  @include mat.all-component-themes($light-theme);
 
-a:link,
-a:active,
-a:visited {
-  color: mat.m2-get-color-from-palette($block-game-primary, 400);
+  .dark-theme {
+    @include mat.all-component-colors($dark-theme);
+  }
+
+  a:link,
+  a:active,
+  a:visited {
+    color: var(--mat-sys-surface);
+  }
 }
 
 * {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-    font-family: sans-serif;
-    transition: color 1s;
-    transition: background-color 1s;
-    user-select: none;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: sans-serif;
+  transition: color 1s;
+  transition: background-color 1s;
+  user-select: none;
 }
-html, body { height: 100%; }
+
+html,
+body {
+  height: 100%;
+}
