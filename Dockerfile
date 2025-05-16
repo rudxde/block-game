@@ -1,7 +1,6 @@
 FROM --platform=$BUILDPLATFORM node:18-alpine as build
 WORKDIR /app
-COPY ./package.json .
-COPY ./package-lock.json .
+COPY ./package*.json .
 RUN npm ci
 COPY ./angular.json .
 COPY ./ngsw-config.json .
