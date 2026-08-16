@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { MenuButtonComponent } from './menu-button.component';
 
@@ -8,12 +9,14 @@ describe('MenuButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    imports: [MenuButtonComponent]
-})
-      .compileComponents();
+      imports: [MenuButtonComponent],
+      providers: [provideRouter([])],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MenuButtonComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('link', ['game']);
+    fixture.componentRef.setInput('text', 'Game');
     fixture.detectChanges();
   });
 

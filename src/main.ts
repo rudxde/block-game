@@ -1,11 +1,10 @@
 import { enableProdMode, ErrorHandler, importProvidersFrom } from '@angular/core';
 import { environment } from './environments/environment';
 import { AppComponent } from './app/components/app/app.component';
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { withInterceptorsFromDi, provideHttpClient } from '@angular/common/http';
-import { ServiceWorkerModule } from '@angular/service-worker';
+import { withInterceptorsFromDi, provideHttpClient, withXhr } from '@angular/common/http';
+import { provideServiceWorker } from '@angular/service-worker';
 import { routes } from './app/app-routing';
-import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
+import { bootstrapApplication } from '@angular/platform-browser';
 import { AppUpdateService } from './app/services/update.service';
 import { GlobalErrorHandler } from './app/services/global-error.service';
 import { provideTransloco, TranslocoService } from '@jsverse/transloco';
@@ -15,22 +14,18 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { TranslocoHttpLoaderService } from './app/services/transloco-http-loader.service';
 
 async function main(): Promise<void> {
-
-
     if (environment.production) {
         enableProdMode();
     }
 
     const app = await bootstrapApplication(AppComponent, {
         providers: [
-            provideHttpClient(withInterceptorsFromDi()),
-            importProvidersFrom(BrowserModule),
-            provideAnimations(),
+            provideHttpClient(withXhr(), withInterceptorsFromDi()),
             provideRouter(routes),
-            importProvidersFrom(ServiceWorkerModule.register('ngsw-worker.js', {
+            provideServiceWorker('ngsw-worker.js', {
                 enabled: environment.production,
                 registrationStrategy: 'registerImmediately',
-            })),
+            }),
             provideTransloco({
                 config: {
                     availableLangs: ['en', 'de', 'es'],

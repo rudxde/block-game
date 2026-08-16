@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { TranslocoService, TranslocoModule } from '@jsverse/transloco';
 import { MenuBarService } from 'src/app/services/menu-bar.service';
 import { AppUpdateService } from 'src/app/services/update.service';
@@ -10,7 +10,6 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatOptionModule } from '@angular/material/core';
-import { NgFor } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
@@ -19,22 +18,22 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     selector: 'app-settings',
     templateUrl: './settings.component.html',
     styleUrls: ['./settings.component.scss'],
-    imports: [TranslocoModule, MatFormFieldModule, MatSelectModule, NgFor, MatOptionModule, MatSlideToggleModule, MatButtonModule, MatSliderModule, ReactiveFormsModule]
+    imports: [TranslocoModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatSlideToggleModule, MatButtonModule, MatSliderModule, ReactiveFormsModule]
 })
 export class SettingsComponent implements OnInit, OnDestroy {
-  destroy$ = new Subject<void>();
-  availableLangs: string[] = [];
-  activeLang: string = '';
+  private readonly destroy$ = new Subject<void>();
+  readonly availableLangs = signal<string[]>([]);
+  readonly activeLang = signal('');
 
-  autoUpdateEnabled: boolean | undefined;
+  readonly autoUpdateEnabled = signal<boolean | undefined>(undefined);
 
-  themeModes: EThemeMode[] = Object.values(EThemeMode);
-  selectedThemeMode: EThemeMode;
+  readonly themeModes: EThemeMode[] = Object.values(EThemeMode);
+  readonly selectedThemeMode = signal<EThemeMode>(EThemeMode.AUTO);
 
-  draggingOffsetLabels: string[] = [];
-  draggingOffset = new FormControl<number>(0);
+  readonly draggingOffsetLabels = signal<string[]>([]);
+  readonly draggingOffset = new FormControl<number>(0);
 
-  draggingOffsetMap = [
+  readonly draggingOffsetMap = [
     16,
     32,
     64,
@@ -48,20 +47,20 @@ export class SettingsComponent implements OnInit, OnDestroy {
     private themeService: ThemeService,
     private gameSettingsService: GameSettingsService,
   ) {
-    this.selectedThemeMode = themeService.getTimeMode();
+    this.selectedThemeMode.set(themeService.getTimeMode());
   }
 
   ngOnInit(): void {
     this.menuBarService.set('settings');
-    this.activeLang = this.translocoService.getActiveLang();
-    this.availableLangs = this.translocoService.getAvailableLangs().map(x => {
+    this.activeLang.set(this.translocoService.getActiveLang());
+    this.availableLangs.set(this.translocoService.getAvailableLangs().map(x => {
       if (typeof x === 'string') {
         return x;
       }
       return x.id;
-    });
+    }));
     this.loadTranslations();
-    this.autoUpdateEnabled = this.appUpdateService.autoUpdateEnabled();
+    this.autoUpdateEnabled.set(this.appUpdateService.autoUpdateEnabled());
     let draggingOffsetIndex = this.draggingOffsetMap.findIndex(x => x === this.gameSettingsService.getGameSettings().draggingOffset);
     if (draggingOffsetIndex === -1) {
       draggingOffsetIndex = 1;
@@ -88,7 +87,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         )
         .map(x => firstValueFrom(x)))
       .then(values => {
-        this.draggingOffsetLabels = values;
+        this.draggingOffsetLabels.set(values);
       },
       );
   }
@@ -102,7 +101,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   setAutoUpdate(value: boolean): void {
     this.appUpdateService.setEnableAutoUpdate(value);
-    this.autoUpdateEnabled = this.appUpdateService.autoUpdateEnabled();
+    this.autoUpdateEnabled.set(this.appUpdateService.autoUpdateEnabled());
   }
 
   checkForUpdates(): void {
@@ -111,7 +110,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   selectTimeMode(mode: EThemeMode): void {
     this.themeService.setThemeMode(mode);
-    this.selectedThemeMode = mode;
+    this.selectedThemeMode.set(mode);
   }
 
   setDraggingOffset(value: number): void {
@@ -120,7 +119,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   getDraggingOffsetLabel = (index: number): string => {
-    return this.draggingOffsetLabels[index] ?? '';
+    return this.draggingOffsetLabels()[index] ?? '';
   };
 
 }

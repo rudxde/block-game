@@ -1,9 +1,8 @@
-import { Component, effect, OnInit, signal } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { Router, RouterOutlet } from '@angular/router';
 import { MenuBarService } from 'src/app/services/menu-bar.service';
-import { NgIf, AsyncPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -14,9 +13,9 @@ import { TranslocoModule } from '@jsverse/transloco';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  imports: [MatSidenavModule, TranslocoModule, MenuButtonComponent, MatToolbarModule, MatButtonModule, MatIconModule, NgIf, RouterOutlet]
+  imports: [MatSidenavModule, TranslocoModule, MenuButtonComponent, MatToolbarModule, MatButtonModule, MatIconModule, RouterOutlet]
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   drawerOpen = signal<boolean>(false);
 
@@ -31,9 +30,6 @@ export class AppComponent implements OnInit {
     private readonly router: Router,
     private readonly menuBarService: MenuBarService,
   ) { }
-
-  ngOnInit(): void {
-  }
 
   async openLink(path: string[]) {
     await this.router.navigate(path);

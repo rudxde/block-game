@@ -1,6 +1,11 @@
 {
   "name": "block-game",
   "version": "0.0.0",
+  "packageManager": "pnpm@11.22.0",
+  "engines": {
+    "node": "^24.15.0",
+    "pnpm": "11.22.0"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -11,34 +16,26 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^19.0.5",
-    "@angular/cdk": "^19.0.4",
-    "@angular/common": "^19.0.5",
-    "@angular/compiler": "^19.0.5",
-    "@angular/core": "^19.0.5",
-    "@angular/forms": "^19.0.5",
-    "@angular/material": "^19.0.4",
-    "@angular/platform-browser": "^19.0.5",
-    "@angular/platform-browser-dynamic": "^19.0.5",
-    "@angular/router": "^19.0.5",
-    "@angular/service-worker": "^19.0.5",
-    "@jsverse/transloco": "^7.5.0",
+    "@angular/cdk": "^22.1.2",
+    "@angular/common": "^22.1.2",
+    "@angular/compiler": "^22.1.2",
+    "@angular/core": "^22.1.2",
+    "@angular/forms": "^22.1.2",
+    "@angular/material": "^22.1.2",
+    "@angular/platform-browser": "^22.1.2",
+    "@angular/router": "^22.1.2",
+    "@angular/service-worker": "^22.1.2",
+    "@jsverse/transloco": "^8.4.0",
     "interpolations": "^1.2.1",
-    "rxjs": "~7.5.0",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.15.0"
+    "rxjs": "~7.8.2",
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^19.0.6",
-    "@angular/cli": "~19.0.6",
-    "@angular/compiler-cli": "^19.0.5",
-    "@types/jasmine": "~4.0.0",
-    "jasmine-core": "~4.2.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.1.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.0.0",
-    "typescript": "~5.6.3"
+    "@angular/build": "^22.1.4",
+    "@angular/cli": "~22.1.4",
+    "@angular/compiler-cli": "^22.1.2",
+    "jsdom": "^30.0.1",
+    "typescript": "~6.0.3",
+    "vitest": "^4.1.10"
   }
 }

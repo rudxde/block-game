@@ -1,47 +1,51 @@
 <mat-sidenav-container  class="app">
-    <mat-sidenav [fixedInViewport]="true" [opened]="drawerOpen()" (closed)="drawerOpen.set(false)" #drawer mode="over">
-        <div class="menu" *transloco="let t, read: 'menu'">
+  <mat-sidenav [fixedInViewport]="true" [opened]="drawerOpen()" (closed)="drawerOpen.set(false)" #drawer mode="over">
+    <div class="menu" *transloco="let t, read: 'menu'">
 
-            <div class="title">
-                <img class="icon" src="/assets/icons/icon-512x512.png" alt="Logo">
-                <h3>
-                    {{t('game_title')}}
-                </h3>
-            </div>
-            
-            <app-menu-button class="menu-button" [link]="['game']" [text]="t('game')" (clicked)="drawer.toggle()">
-            </app-menu-button>
-            <app-menu-button class="menu-button" [link]="['game', 'baby']" [text]="t('baby_mode')"
-                (clicked)="drawer.toggle()"></app-menu-button>
-            <app-menu-button class="menu-button" [link]="['game', 'extreme']" [text]="t('extreme_mode')"
-                (clicked)="drawer.toggle()"></app-menu-button>
-            <app-menu-button class="menu-button" [link]="['game', 'mode4']" [text]="t('mode4')"
-                (clicked)="drawer.toggle()"></app-menu-button>
-            <span class="spacer"></span>
-            <app-menu-button class="menu-button" [link]="['settings']" [text]="t('settings')"
-                (clicked)="drawer.toggle()"></app-menu-button>
-        </div>
-    </mat-sidenav>
-    <mat-sidenav-content class="drawer-content">
-        <mat-toolbar class="toolbar" *transloco="let t, read: 'toolbar'">
-            <button class="toggle-menu" mat-icon-button (click)="toggleDrawer()">
-                <mat-icon>menu</mat-icon>
-            </button>
+      <div class="title">
+        <img class="icon" src="/assets/icons/icon-512x512.png" alt="Logo">
+        <h3>
+          {{t('game_title')}}
+        </h3>
+      </div>
 
-            <span class="title" *ngIf="title() as title">
-                <h3>
-                    {{ t(title) }}
-                </h3>
-            </span>
+      <app-menu-button class="menu-button" [link]="['game']" [text]="t('game')" (clicked)="drawer.toggle()">
+      </app-menu-button>
+      <app-menu-button class="menu-button" [link]="['game', 'baby']" [text]="t('baby_mode')"
+      (clicked)="drawer.toggle()"></app-menu-button>
+      <app-menu-button class="menu-button" [link]="['game', 'extreme']" [text]="t('extreme_mode')"
+      (clicked)="drawer.toggle()"></app-menu-button>
+      <app-menu-button class="menu-button" [link]="['game', 'mode4']" [text]="t('mode4')"
+      (clicked)="drawer.toggle()"></app-menu-button>
+      <span class="spacer"></span>
+      <app-menu-button class="menu-button" [link]="['settings']" [text]="t('settings')"
+      (clicked)="drawer.toggle()"></app-menu-button>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content class="drawer-content">
+    <mat-toolbar class="toolbar" *transloco="let t, read: 'toolbar'">
+      <button class="toggle-menu" mat-icon-button (click)="toggleDrawer()">
+        <mat-icon>menu</mat-icon>
+      </button>
 
-            <span class="action-button" *ngIf="actionButton() as actionButton">
-                <button mat-icon-button (click)="actionButton.click()" [title]="actionButton.title">
-                    <mat-icon>{{actionButton.icon}}</mat-icon>
-                </button>
-            </span>
-        </mat-toolbar>
-        <div class="router-content">
-            <router-outlet></router-outlet>
-        </div>
-    </mat-sidenav-content>
+      @if (title(); as title) {
+        <span class="title">
+          <h3>
+            {{ t(title) }}
+          </h3>
+        </span>
+      }
+
+      @if (actionButton(); as actionButton) {
+        <span class="action-button">
+          <button mat-icon-button (click)="actionButton.click()" [title]="actionButton.title">
+            <mat-icon>{{actionButton.icon}}</mat-icon>
+          </button>
+        </span>
+      }
+    </mat-toolbar>
+    <div class="router-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
 </mat-sidenav-container>

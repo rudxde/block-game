@@ -13,10 +13,13 @@ jobs:
         name: Checkout [master]
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test --watch=false
       - name: add commit to ngsw-config.json
         run: |
           jq '.appData.GITHUB_SHA += "${{ github.sha }}"' ngsw-config.json > ngsw-config-tmp.json

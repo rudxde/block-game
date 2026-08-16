@@ -1,35 +1,43 @@
 <div class="game">
-    <div class="score" *transloco="let t, read: 'game'">
-        <span class="score-num">
-            {{ displayScore() }}
-        </span>
-        <span class="high-score">
-            {{t('high_score', {score: (displayHighScore())})}}
-        </span>
-    </div>
-    <canvas #canvas class="canvas"></canvas>
+  <div class="score" *transloco="let t, read: 'game'">
+    <span class="score-num">
+      {{ displayScore() }}
+    </span>
+    <span class="high-score">
+      {{t('high_score', {score: (displayHighScore())})}}
+    </span>
+  </div>
+  <canvas #canvas class="canvas"></canvas>
 
-    <div class="game-end overlay" *ngIf="gameEnded() && !startNewVerification()">
-        <div class="game-end-cnt" *transloco="let t, read: 'game'">
-            {{t('game_over')}}
-            <br>
-            <span *ngIf="gameInstanceService.game.isHighScore">
-                {{t('new_high_score', {score: displayScore()})}}
+  @if (gameEnded() && !startNewVerification()) {
+    <div class="game-end overlay">
+      <div class="game-end-cnt" *transloco="let t, read: 'game'">
+        {{t('game_over')}}
+        <br>
+          @if (gameInstanceService.game.isHighScore) {
+            <span>
+              {{t('new_high_score', {score: displayScore()})}}
             </span>
-            <span *ngIf="!gameInstanceService.game.isHighScore">
-                {{t('new_score', {score: displayScore()})}}
+          }
+          @if (!gameInstanceService.game.isHighScore) {
+            <span>
+              {{t('new_score', {score: displayScore()})}}
             </span>
-            <br>
+          }
+          <br>
             <button mat-raised-button color="primary" (click)="newGame()">{{t('new_game')}}</button>
+          </div>
         </div>
-    </div>
+      }
 
-    <div class="start-new-verification overlay" *ngIf="startNewVerification()">
-        <div class="start-new-verification-cnt" *transloco="let t, read: 'game'">
+      @if (startNewVerification()) {
+        <div class="start-new-verification overlay">
+          <div class="start-new-verification-cnt" *transloco="let t, read: 'game'">
             {{t('start-new-game-sure')}}
             <br/>
             <button mat-raised-button color="primary" (click)="newGame()">{{t('new_game')}}</button>
             <button mat-raised-button color="primary" (click)="newGameAbort()">{{t('abort')}}</button>
+          </div>
         </div>
+      }
     </div>
-</div>

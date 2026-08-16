@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, effect, ElementRef, OnDestroy, OnInit, Signal, signal, ViewChild, WritableSignal } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, ElementRef, OnDestroy, signal, ViewChild, WritableSignal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, filter, interval, Observable, Subject, takeUntil } from 'rxjs';
 import { GameTheme } from 'src/app/game/game-theme';
@@ -9,7 +9,6 @@ import { MenuBarService } from 'src/app/services/menu-bar.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { GameSettingsService } from '../../services/game-settings.service';
 import { MatButtonModule } from '@angular/material/button';
-import { NgIf, AsyncPipe } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -18,7 +17,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss'],
-  imports: [TranslocoModule, NgIf, MatButtonModule]
+  imports: [TranslocoModule, MatButtonModule]
 })
 export class GameComponent implements AfterViewInit, OnDestroy {
 

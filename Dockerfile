@@ -1,15 +1,14 @@
-FROM --platform=$BUILDPLATFORM node:18-alpine as build
+FROM --platform=$BUILDPLATFORM node:24.18-alpine AS build
 WORKDIR /app
-COPY ./package.json .
-COPY ./package-lock.json .
-RUN npm ci
+COPY ./package.json ./pnpm-lock.yaml ./pnpm-workspace.yaml ./
+RUN corepack enable && pnpm install --frozen-lockfile
 COPY ./angular.json .
 COPY ./ngsw-config.json .
 COPY tsconfig.json .
 COPY tsconfig.app.json .
 COPY src ./src
 
-RUN npm run build:prod
+RUN pnpm build:prod
 
 FROM nginx:alpine
 ARG APP

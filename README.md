@@ -7,9 +7,11 @@ Screenshot of the game:
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Use Node 24 and enable Corepack, then run `pnpm install`.
+
+Run `pnpm start` for a dev server. Navigate to `http://localhost:4200/`. The application automatically reloads on source changes.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-Or run `docker build -t block-game .` to build an docker container.
+Run `pnpm build:prod`. Build output goes to `dist/`.
+Or run `docker build -t block-game .`.
